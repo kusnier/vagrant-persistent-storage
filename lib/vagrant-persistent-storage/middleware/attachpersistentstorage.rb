@@ -10,8 +10,7 @@ module VagrantPersistentStorage
       options = @vm.config.persistent_storage
       if !options.location  ^ !options.size
         env[:ui].error "Attach Persistent Storage failed. Location and size must be filled out."
-      else
-
+      elsif options.location
         if !File.exists?(options.location)
           @vm.config.vm.customize ["createhd", "--filename", options.location, "--size", options.size]
           env[:ui].success "Create Persistent Storage."
