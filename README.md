@@ -29,7 +29,7 @@ Every `vagrant up` will attach this file as hard disk to the guest machine.
 An `vagrant destory` will detach the storage to avoid deletion of the storage by vagrant.
 A `vagrant destory` generally destroys all attached drives. See [VBoxMange unregistervm --delete option][vboxmanage_delete].
 
-### How to initialize the tisk with puppt
+### How to initialize the disk with puppet
 
 This is a sample puppet setup to create a partition on the guest system:
 
