@@ -26,8 +26,8 @@ config.persistent_storage.size = 5000
 ```
 
 Every `vagrant up` will attach this file as hard disk to the guest machine.
-An `vagrant destory` will detach the storage to avoid deletion of the storage by vagrant.
-A `vagrant destory` generally destroys all attached drives. See [VBoxMange unregistervm --delete option][vboxmanage_delete].
+An `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
+A `vagrant destroy` generally destroys all attached drives. See [VBoxMange unregistervm --delete option][vboxmanage_delete].
 
 ### How to initialize the disk with puppet
 
