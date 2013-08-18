@@ -1,40 +1,36 @@
-module VagrantPersistentStorage
+module VagrantPlugins
+  module ProviderVirtualBox
+    module Driver
+      class Base
 
-    module ProviderVirtualBox
-
-        module Driver
-
-            class Base
-
-                def create_hd
-                    if ! File.exists?(options.location)
-                        execute("createhd", @uuid, "--filename", options.location, "--size", options.size)
-                    end
-                end
-
-                def storage_attach
-                    execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", 1, "--type", "hdd", "--medium", options.location)
-                end
-
-                def storage_detach
-                    if options.location and read_persistent_storage() == options.location
-                        execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "none")
-                    end
-                end
-
-                def read_persistent_storage
-                    info = execute("showvminfo", @uuid, "--machinereadable", :retryable => true)
-                    info.split("\n").each do |line|
-                        return $1.to_s if line =~ /^"SATA Controller-1-0"="(.+?)"$/
-                    end
-                    nil
-                end
-
-            end
-
+        def create_storage(location, size)
+          if ! File.exists?(location)
+            execute("createhd", "--filename", location, "--size", size)
+          end
         end
 
-    end
+        def attach_storage(location)
+#          if location and read_persistent_storage(location) == location
+          execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "#{location}.vdi")
+#          end
+        end
 
+        def detach_storage(location)
+          if location and read_persistent_storage(location) == location
+            execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "none")
+          end
+        end
+
+        def read_persistent_storage(location)
+          info = execute("showvminfo", @uuid, "--machinereadable", :retryable => true)
+          info.split("\n").each do |line|
+            return $1.to_s if line =~ /^"SATA Controller-1-0"="(.+?)"$/
+          end
+          nil
+        end
+
+      end
+    end
+  end
 end
 
