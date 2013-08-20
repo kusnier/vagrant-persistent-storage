@@ -1,15 +1,12 @@
 require 'vagrant'
 
 module VagrantPlugins
-
   module PersistentStorage
-
     class Plugin < Vagrant.plugin('2')
 
       include Vagrant::Action::Builtin
 
       require_relative "action"
-      require_relative "providers/virtualbox/action"
       require_relative "providers/virtualbox/driver/base"
       require_relative "providers/virtualbox/driver/meta"
 
@@ -23,41 +20,29 @@ module VagrantPlugins
         Config
       end
 
+      ## NB Currently only works with Virtualbox provider, due to hooks being used
       action_hook(:persistent_storage, :machine_action_up) do |hook|
 
         hook.after VagrantPlugins::ProviderVirtualBox::Action::SaneDefaults,
-                  VagrantPlugins::ProviderVirtualBox::Action.create_adapter
+                  VagrantPlugins::PersistentStorage::Action.create_adapter
 
         hook.after VagrantPlugins::ProviderVirtualBox::Action::Boot,
-                  VagrantPlugins::ProviderVirtualBox::Action.create_storage
+                  VagrantPlugins::PersistentStorage::Action.create_storage
 
         hook.before VagrantPlugins::ProviderVirtualBox::Action::CheckGuestAdditions,
-                  VagrantPlugins::ProviderVirtualBox::Action.attach_storage
+                  VagrantPlugins::PersistentStorage::Action.attach_storage
 
         hook.after VagrantPlugins::ProviderVirtualBox::Action::CheckGuestAdditions,
                   VagrantPlugins::PersistentStorage::Action.manage_storage
 
-        hook.after VagrantPlugins::ProviderVirtualBox::Action.attach_storage,
+        hook.after VagrantPlugins::PersistentStorage::Action.attach_storage,
                   VagrantPlugins::PersistentStorage::Action.manage_storage
-
       end
 
-#      action_hook(:persistent_storage, :machine_action_provision) do |hook|
-#        hook.prepend(VagrantPlugins::ProviderVirtualBox::Action.create_storage)
-#        hook.prepend(VagrantPlugins::ProviderVirtualBox::Action.attach_storage)
-#      end
-#
-#      action_hook(:persistent_storage, :machine_action_boot) do |hook|
-#        hook.append(VagrantPlugins::ProviderVirtualBox::Action.create_storage)
-#        hook.append(VagrantPlugins::ProviderVirtualBox::Action.attach_storage)
-#      end
-
       action_hook(:persistent_storage, :machine_action_destroy) do |hook|
-        hook.prepend(VagrantPlugins::ProviderVirtualBox::Action.detach_storage)
+        hook.prepend(VagrantPlugins::PersistentStorage::Action.detach_storage)
       end
 
     end
-
   end
-
 end

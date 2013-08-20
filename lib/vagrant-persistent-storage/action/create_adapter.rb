@@ -1,16 +1,16 @@
-#require 'vagrant-persistent-storage/vbox_storage'
+#require "log4r"
 
 module VagrantPlugins
-  module ProviderVirtualBox
+  module PersistentStorage
     module Action
-      class DetachStorage
+      class CreateAdapter
 
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
           @global_env = @machine.env
           @provider = env[:provider]
-          @logger = Log4r::Logger.new('vagrant::persistentstorage::create_hd')
+#          @logger = Log4r::Logger.new('vagrant::persistent_storage::::action::create_adapter')
         end
 
         def call(env)
@@ -24,15 +24,14 @@ module VagrantPlugins
 #          return @app.call(env) if @machine.state.id != :running && env[:machine_action] == :suspend
 
           # check config to see if the disk should be created
-          @logger.info 'Detaching HD'
+#          @logger.info 'Creating Adapter'
 
-          env[:ui].info I18n.t("vagrant.actions.vm.detachstorage.detaching")
-          location = env[:machine].config.persistent_storage.location
-          env[:machine].provider.driver.detach_storage(location)
+          env[:ui].info I18n.t("vagrant.actions.vm.createadapter.creating")
+          env[:machine].provider.driver.create_adapter
 
           @app.call(env)
 
-        end
+       end
 
       end
     end

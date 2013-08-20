@@ -1,0 +1,9 @@
+en:
+  vagrant_persistent_storage:
+    action:
+      create_storage: "Creating persistent storage"
+      attach_storage: "Attaching persistent storage"
+      detach_storage: "Attaching persistent storage"
+    config:
+      not_a_bool: "A value for %{config_key} can only be true or false, not type '%{value}'"
+      not_an_array_or_string: "A value for %{config_key} must be an Array or String, not type '%{is_class}'"
