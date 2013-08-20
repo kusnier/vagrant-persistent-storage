@@ -1,18 +1,16 @@
 #require "log4r"
-require 'vagrant-persistent-storage/manage_storage'
 
 module VagrantPlugins
   module PersistentStorage
     module Action
-      class ManageAll
-        include ManageStorage
+      class DetachStorage
 
         def initialize(app, env)
           @app = app
           @machine = env[:machine]
           @global_env = @machine.env
-          @provider = @machine.provider_name
-#          @logger = Log4r::Logger.new('vagrant::persistent_storage::manage_volumes')
+          @provider = env[:provider]
+#          @logger = Log4r::Logger.new('vagrant::persistentstorage::create_hd')
         end
 
         def call(env)
@@ -24,16 +22,18 @@ module VagrantPlugins
           return @app.call(env) if @machine.state.id != :saved && env[:machine_action] == :resume
           # skip if machine is not running and the action is suspend
           return @app.call(env) if @machine.state.id != :running && env[:machine_action] == :suspend
-          
-#          @logger.info 'Managing persistent volumes automatically'
 
-          env[:ui].info I18n.t('vagrant_persistent_storage.action.manage_volumes')
-          machine = env[:machine]
-          manage_volumes(machine)
+          # check config to see if the disk should be created
+#          @logger.info 'Detaching HD'
+
+          env[:ui].info I18n.t("vagrant.actions.vm.detachstorage.detaching")
+          location = env[:machine].config.persistent_storage.location
+          env[:machine].provider.driver.detach_storage(location)
 
           @app.call(env)
 
         end
+
       end
     end
   end
