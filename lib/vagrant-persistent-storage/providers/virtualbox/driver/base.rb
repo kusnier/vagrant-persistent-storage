@@ -3,6 +3,10 @@ module VagrantPlugins
     module Driver
       class Base
 
+        def create_adapter
+          execute("storagectl", @uuid, "--name", "SATA Controller", "--sataportcount", "2")
+        end
+
         def create_storage(location, size)
           if ! File.exists?(location)
             execute("createhd", "--filename", location, "--size", size)
@@ -11,13 +15,13 @@ module VagrantPlugins
 
         def attach_storage(location)
 #          if location and read_persistent_storage(location) == location
-          execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "#{location}.vdi")
+          execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
 #          end
         end
 
         def detach_storage(location)
           if location and read_persistent_storage(location) == location
-            execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--type", "hdd", "--medium", "none")
+            execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", "none")
           end
         end
 
