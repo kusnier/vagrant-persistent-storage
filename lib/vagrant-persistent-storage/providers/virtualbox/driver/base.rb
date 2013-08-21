@@ -14,7 +14,7 @@ module VagrantPlugins
         end
 
         def attach_storage(location)
-#          if location and read_persistent_storage(location) == location
+#          if location != 0 and read_persistent_storage(location) == location
           execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
 #          end
         end

@@ -1,10 +1,11 @@
-#require "log4r"
+require "log4r"
 require 'vagrant-persistent-storage/manage_storage'
 
 module VagrantPlugins
   module PersistentStorage
     module Action
       class ManageAll
+
         include ManageStorage
 
         def initialize(app, env)
@@ -12,12 +13,10 @@ module VagrantPlugins
           @machine = env[:machine]
           @global_env = @machine.env
           @provider = @machine.provider_name
-#          @logger = Log4r::Logger.new('vagrant::persistent_storage::manage_volumes')
+          @logger = Log4r::Logger.new('vagrant::persistent_storage::action::manage_storage')
         end
 
         def call(env)
-          # skip if machine is running and the action is resume or up
-          return @app.call(env) if @machine.state.id == :running && [:resume, :up].include?(env[:machine_action])
           # skip if machine is not running and the action is destroy, halt or suspend
           return @app.call(env) if @machine.state.id != :running && [:destroy, :halt, :suspend].include?(env[:machine_action])
           # skip if machine is not saved and the action is resume
@@ -25,15 +24,16 @@ module VagrantPlugins
           # skip if machine is not running and the action is suspend
           return @app.call(env) if @machine.state.id != :running && env[:machine_action] == :suspend
           
-#          @logger.info 'Managing persistent volumes automatically'
+          @logger.info 'Managing persistent volume'
 
-          env[:ui].info I18n.t('vagrant_persistent_storage.action.manage_volumes')
+          env[:ui].info I18n.t('vagrant_persistent_storage.action.manage_storage')
           machine = env[:machine]
           manage_volumes(machine)
 
           @app.call(env)
 
         end
+
       end
     end
   end
