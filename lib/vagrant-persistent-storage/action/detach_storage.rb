@@ -21,8 +21,8 @@ module VagrantPlugins
           # skip if machine is not running and the action is suspend
           return @app.call(env) if @machine.state.id != :running && env[:machine_action] == :suspend
 
-          # check config to see if the disk should be created
-          @logger.info 'Detaching persistent storage'
+          return @app.call(env) unless env[:machine].config.persistent_storage.enabled?
+          @logger.info '** Detaching Persistent Storage **'
 
           env[:ui].info I18n.t("vagrant_persistent_storage.action.detach_storage")
           location = env[:machine].config.persistent_storage.location

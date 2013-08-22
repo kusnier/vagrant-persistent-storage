@@ -24,7 +24,9 @@ module VagrantPlugins
           # skip if machine is not running and the action is suspend
           return @app.call(env) if @machine.state.id != :running && env[:machine_action] == :suspend
           
-          @logger.info 'Managing persistent volume'
+          return @app.call(env) unless env[:machine].config.persistent_storage.enabled?
+          return @app.call(env) unless env[:machine].config.persistent_storage.manage?
+          @logger.info '** Managing Persistent Storage **'
 
           env[:ui].info I18n.t('vagrant_persistent_storage.action.manage_storage')
           machine = env[:machine]
