@@ -51,13 +51,13 @@ echo "vg activation returned:  $?" >> disk_operation_log.txt
 
 <% if format == true  %>
 # Create the filesytem if it doesn't already exist
-[[ `blkid | grep #{mnt_name}` ]] || mkfs.#{fs_type} #{device}
+[[ `blkid | grep #{device}` ]] || mkfs.#{fs_type} #{device}
 echo "#{fs_type} creation return:  $?" >> disk_operation_log.txt
 <% if mount == true %>
 # Create mountpoint #{mnt_point}
 [ -d #{mnt_point} ] || mkdir -p #{mnt_point}
 # Update fstab with new mountpoint name
-[[ `grep -i #{mnt_name} /etc/fstab` ]] || echo #{device} #{mnt_point} #{fs_type} defaults 0 0 >> /etc/fstab
+[[ `grep -i #{device} /etc/fstab` ]] || echo #{device} #{mnt_point} #{fs_type} defaults 0 0 >> /etc/fstab
 echo "fstab update returned:  $?" >> disk_operation_log.txt
 # Finally, mount the partition
 [[ `mount | grep #{mnt_point}` ]] || mount #{mnt_point}
