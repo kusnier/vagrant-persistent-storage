@@ -51,7 +51,7 @@ echo "vg activation returned:  $?" >> disk_operation_log.txt
 
 <% if format == true  %>
 # Create the filesytem if it doesn't already exist
-[[ `blkid | grep #{device}` ]] || mkfs.#{fs_type} #{device}
+[[ `blkid | grep #{mnt_name} | grep #{fs_type}` ]] || mkfs.#{fs_type} #{device}
 echo "#{fs_type} creation return:  $?" >> disk_operation_log.txt
 <% if mount == true %>
 # Create mountpoint #{mnt_point}

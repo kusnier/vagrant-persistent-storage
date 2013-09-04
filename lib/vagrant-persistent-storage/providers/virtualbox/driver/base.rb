@@ -8,15 +8,11 @@ module VagrantPlugins
         end
 
         def create_storage(location, size)
-          if ! File.exists?(location)
-            execute("createhd", "--filename", location, "--size", size)
-          end
+          execute("createhd", "--filename", location, "--size", size)
         end
 
         def attach_storage(location)
-#          if location != 0 and read_persistent_storage(location) == location
           execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
-#          end
         end
 
         def detach_storage(location)

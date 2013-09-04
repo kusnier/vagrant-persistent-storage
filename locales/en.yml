@@ -3,6 +3,7 @@ en:
     action:
       create_adapter: "** Creating adapter for persistent storage **"
       create_storage: "** Creating persistent storage **"
+      not_creating:   "** Persistent Storage Volume exists, not creating **"
       attach_storage: "** Attaching persistent storage **"
       detach_storage: "** Detaching persistent storage **"
       manage_storage: "** Managing persistent storage **"

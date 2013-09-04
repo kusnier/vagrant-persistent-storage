@@ -40,7 +40,10 @@ module VagrantPlugins
       end
 
       action_hook(:persistent_storage, :machine_action_destroy) do |hook|
-        hook.prepend(VagrantPlugins::PersistentStorage::Action.detach_storage)
+        hook.after VagrantPlugins::ProviderVirtualBox::Action::action_halt,
+                  VagrantPlugins::PersistentStorage::Action.detach_storage
+        hook.before VagrantPlugins::ProviderVirtualBox::Action::Destroy,
+                  VagrantPlugins::PersistentStorage::Action.detach_storage
       end
 
     end

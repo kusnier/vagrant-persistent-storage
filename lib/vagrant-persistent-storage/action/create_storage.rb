@@ -24,15 +24,21 @@ module VagrantPlugins
           return @app.call(env) unless env[:machine].config.persistent_storage.enabled?
 
           # check config to see if the disk should be created
-          return @app.call(env) unless @machine.config.persistent_storage.create?
-          @logger.info '** Creating Persistent Storage **'
+          return @app.call(env) unless env[:machine].config.persistent_storage.create?
 
-          env[:ui].info I18n.t("vagrant_persistent_storage.action.create_storage")
-          location = env[:machine].config.persistent_storage.location
-          size = env[:machine].config.persistent_storage.size
-          env[:machine].provider.driver.create_storage(location, size)
+          if File.exists?(env[:machine].config.persistent_storage.location)
+            @logger.info '** Persistent Storage Volume exists, not creating **'
+            env[:ui].info I18n.t("vagrant_persistent_storage.action.not_creating")
+            @app.call(env)
 
-          @app.call(env)
+          else
+            @logger.info '** Creating Persistent Storage **'
+            env[:ui].info I18n.t("vagrant_persistent_storage.action.create_storage")
+            location = env[:machine].config.persistent_storage.location
+            size = env[:machine].config.persistent_storage.size
+            env[:machine].provider.driver.create_storage(location, size)
+            @app.call(env)
+          end
 
         end
 
