@@ -5,7 +5,7 @@ require 'vagrant-persistent-storage/version'
 
 Gem::Specification.new do |gem|
   gem.name          = "vagrant-persistent-storage"
-  gem.version       = VagrantPersistentStorage::VERSION
+  gem.version       = VagrantPlugins::PersistentStorage::VERSION
   gem.authors       = ["Sebastian Kusnier"]
   gem.email         = ["sebastian@kusnier.net"]
   gem.description   = "A Vagrant plugin that creates a persistent storage and attaches it to guest machine."
