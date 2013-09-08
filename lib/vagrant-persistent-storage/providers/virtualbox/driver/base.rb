@@ -8,7 +8,7 @@ module VagrantPlugins
         end
 
         def create_storage(location, size)
-          execute("createhd", "--filename", location, "--size", size)
+          execute("createhd", "--filename", location, "--size", "#{size}")
         end
 
         def attach_storage(location)
