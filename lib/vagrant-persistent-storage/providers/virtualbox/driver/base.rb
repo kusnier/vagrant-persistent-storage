@@ -22,6 +22,8 @@ module VagrantPlugins
         end
 
         def read_persistent_storage(location)
+          ## Ensure previous operations are complete - bad practise yes, not sure how to avoid this:
+          sleep 3
           info = execute("showvminfo", @uuid, "--machinereadable", :retryable => true)
           info.split("\n").each do |line|
             return $1.to_s if line =~ /^"SATA Controller-1-0"="(.+?)"$/

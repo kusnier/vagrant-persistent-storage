@@ -22,19 +22,14 @@ module VagrantPlugins
 
       ## NB Currently only works with Virtualbox provider, due to hooks being used
       action_hook(:persistent_storage, :machine_action_up) do |hook|
-
         hook.after VagrantPlugins::ProviderVirtualBox::Action::SaneDefaults,
                   VagrantPlugins::PersistentStorage::Action.create_adapter
-
-        hook.after VagrantPlugins::ProviderVirtualBox::Action::Boot,
+        hook.before VagrantPlugins::ProviderVirtualBox::Action::Boot,
                   VagrantPlugins::PersistentStorage::Action.create_storage
-
-        hook.before VagrantPlugins::ProviderVirtualBox::Action::CheckGuestAdditions,
+        hook.before VagrantPlugins::ProviderVirtualBox::Action::Boot,
                   VagrantPlugins::PersistentStorage::Action.attach_storage
-
         hook.after VagrantPlugins::ProviderVirtualBox::Action::CheckGuestAdditions,
                   VagrantPlugins::PersistentStorage::Action.manage_storage
-
         hook.after VagrantPlugins::PersistentStorage::Action.attach_storage,
                   VagrantPlugins::PersistentStorage::Action.manage_storage
       end
@@ -44,6 +39,22 @@ module VagrantPlugins
                   VagrantPlugins::PersistentStorage::Action.detach_storage
         hook.before VagrantPlugins::ProviderVirtualBox::Action::Destroy,
                   VagrantPlugins::PersistentStorage::Action.detach_storage
+      end
+
+      action_hook(:persistent_storage, :machine_action_halt) do |hook|
+        hook.after VagrantPlugins::ProviderVirtualBox::Action::GracefulHalt,
+                  VagrantPlugins::PersistentStorage::Action.detach_storage
+        hook.after VagrantPlugins::ProviderVirtualBox::Action::ForcedHalt,
+                  VagrantPlugins::PersistentStorage::Action.detach_storage
+      end
+
+      action_hook(:persistent_storage, :machine_action_reload) do |hook|
+        hook.after VagrantPlugins::ProviderVirtualBox::Action::GracefulHalt,
+                  VagrantPlugins::PersistentStorage::Action.detach_storage
+        hook.after VagrantPlugins::ProviderVirtualBox::Action::ForcedHalt,
+                  VagrantPlugins::PersistentStorage::Action.detach_storage
+        hook.before VagrantPlugins::ProviderVirtualBox::Action::Boot,
+                  VagrantPlugins::PersistentStorage::Action.attach_storage
       end
 
     end
