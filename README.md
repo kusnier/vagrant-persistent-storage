@@ -14,6 +14,7 @@ After installing you can set the location and size of the persistent storage.
 The following options will create a persistent storage with 5000 MB, named mysql,
 mounted on /var/lib/mysql, in a volume group called 'vagrant'
 ```ruby
+config.persistent_storage.enabled = true
 config.persistent_storage.location = "~/development/sourcehdd.vdi"
 config.persistent_storage.size = 5000
 config.persistent_storage.mountname = 'mysql'
