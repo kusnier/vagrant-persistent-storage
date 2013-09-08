@@ -1,3 +1,5 @@
-module VagrantPersistentStorage
-    VERSION = "0.0.2"
+module VagrantPlugins
+  module PersistentStorage
+    VERSION = "0.0.3"
+  end
 end
