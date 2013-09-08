@@ -35,7 +35,7 @@ with entries added to fstab ... subsequent runs will mount this disk with the op
 
 ## Contributors
 
-* @madAndroid
+* [madAndroid](https://github.com/madAndroid)
 
 ## TODO
 
