@@ -1,3 +1,5 @@
+require 'pathname'
+
 module VagrantPlugins
   module ProviderVirtualBox
     module Driver
@@ -16,7 +18,7 @@ module VagrantPlugins
         end
 
         def detach_storage(location)
-          if location and read_persistent_storage(location) == location
+          if location and identical_files(read_persistent_storage(location), location)
             execute("storageattach", @uuid, "--storagectl", "SATA Controller", "--port", "1", "--device", "0", "--type", "hdd", "--medium", "none")
           end
         end
@@ -29,6 +31,10 @@ module VagrantPlugins
             return $1.to_s if line =~ /^"SATA Controller-1-0"="(.+?)"$/
           end
           nil
+        end
+
+        def identical_files(file1, file2)
+          return File.identical?(Pathname.new(file1).realpath, Pathname.new(file2).realpath)
         end
 
       end
