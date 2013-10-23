@@ -6,7 +6,7 @@ module VagrantPlugins
       class Base
 
         def create_adapter
-          execute("storagectl", @uuid, "--name", "SATA Controller", "--sataportcount", "2")
+          execute("storagectl", @uuid, "--name", "SATA Controller", "--" + (@version.start_with?("4.3") ? "" : "sata") + "portcount", "2")
         end
 
         def create_storage(location, size)
