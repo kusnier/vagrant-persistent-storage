@@ -33,6 +33,10 @@ The disk is initialized and added to it's own volume group as specfied in the co
 this defaults to 'vagrant'. An ext4 filesystem is created and the disk mounted appropriately,
 with entries added to fstab ... subsequent runs will mount this disk with the options specified
 
+## Supported Providers
+
+* Only the VirtualBox provider is supported.
+
 ## Contributors
 
 * [madAndroid](https://github.com/madAndroid)
