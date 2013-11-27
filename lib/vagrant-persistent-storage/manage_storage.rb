@@ -71,7 +71,7 @@ exit $?
         tmp_script = "/tmp/disk_operations_#{mnt_name}.sh"
         target_script = "/tmp/disk_operations_#{mnt_name}.sh"
 
-        File.open("#{tmp_script}", 'w') do |f|
+        File.open("#{tmp_script}", 'wb') do |f|
             f.write buffer
         end
         m.communicate.upload(tmp_script, target_script)
