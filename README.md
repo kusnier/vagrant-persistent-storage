@@ -40,6 +40,7 @@ with entries added to fstab ... subsequent runs will mount this disk with the op
 ## Contributors
 
 * [madAndroid](https://github.com/madAndroid)
+* [Jeremiah Snapp](https://github.com/jeremiahsnapp)
 
 ## TODO
 
