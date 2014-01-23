@@ -18,8 +18,8 @@ module VagrantPlugins
           return @app.call(env) if @machine.state.id != :running && [:destroy, :halt, :suspend].include?(env[:machine_action])
           # skip if machine is not saved and the action is resume
           return @app.call(env) if @machine.state.id != :saved && env[:machine_action] == :resume
-          # skip if machine is powered off and the action is resume
-          return @app.call(env) if @machine.state.id == :poweroff && env[:machine_action] == :resume
+          # skip if machine is powered off and the action is resume or up
+          return @app.call(env) if @machine.state.id == :poweroff && [:resume, :up].include?(env[:machine_action])
           # skip if machine is saved
           return @app.call(env) if @machine.state.id == :saved
 
