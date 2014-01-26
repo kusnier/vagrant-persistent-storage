@@ -24,12 +24,13 @@ module VagrantPlugins
         end
 
         def detach_storage(location)
-          if location and identical_files(read_persistent_storage(location), location)
+          persistent_storage = read_persistent_storage()
+          if location and persistent_storage != "none" and identical_files(persistent_storage, location)
             execute("storageattach", @uuid, "--storagectl", get_sata_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "none")
           end
         end
 
-        def read_persistent_storage(location)
+        def read_persistent_storage()
           ## Ensure previous operations are complete - bad practise yes, not sure how to avoid this:
           sleep 3
           info = execute("showvminfo", @uuid, "--machinereadable", :retryable => true)
