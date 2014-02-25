@@ -9,6 +9,7 @@ module VagrantPlugins
       def populate_template(m)
         mnt_name = m.config.persistent_storage.mountname
         mnt_point = m.config.persistent_storage.mountpoint
+        mnt_options = m.config.persistent_storage.mountoptions
         vg_name = m.config.persistent_storage.volgroupname
         disk_dev = m.config.persistent_storage.diskdevice
         fs_type = m.config.persistent_storage.filesystem
@@ -20,6 +21,7 @@ module VagrantPlugins
         vg_name = 'vps' unless vg_name != 0
         disk_dev = '/dev/sdb' unless disk_dev != 0
         mnt_name = 'vps' unless mnt_name != 0
+        mnt_options = ['defaults'] unless mnt_options != 0
         fs_type = 'ext3' unless fs_type != 0
         if use_lvm
           device = "/dev/#{vg_name}-vg1/#{mnt_name}"
@@ -57,7 +59,7 @@ echo "#{fs_type} creation return:  $?" >> disk_operation_log.txt
 # Create mountpoint #{mnt_point}
 [ -d #{mnt_point} ] || mkdir -p #{mnt_point}
 # Update fstab with new mountpoint name
-[[ `grep -i #{device} /etc/fstab` ]] || echo #{device} #{mnt_point} #{fs_type} defaults 0 0 >> /etc/fstab
+[[ `grep -i #{device} /etc/fstab` ]] || echo #{device} #{mnt_point} #{fs_type} #{mnt_options.join(',')} 0 0 >> /etc/fstab
 echo "fstab update returned:  $?" >> disk_operation_log.txt
 # Finally, mount the partition
 [[ `mount | grep #{mnt_point}` ]] || mount #{mnt_point}
