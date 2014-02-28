@@ -14,6 +14,7 @@ module VagrantPlugins
       attr_accessor :location
       attr_accessor :mountname
       attr_accessor :mountpoint
+      attr_accessor :mountoptions
       attr_accessor :diskdevice
       attr_accessor :filesystem
       attr_accessor :volgroupname
@@ -36,6 +37,7 @@ module VagrantPlugins
         @location = UNSET_VALUE
         @mountname = UNSET_VALUE
         @mountpoint = UNSET_VALUE
+        @mountoptions = UNSET_VALUE
         @diskdevice = UNSET_VALUE
         @filesystem = UNSET_VALUE
         @volgroupname = UNSET_VALUE
@@ -52,6 +54,7 @@ module VagrantPlugins
         @location = 0 if @location == UNSET_VALUE
         @mountname = 0 if @mountname == UNSET_VALUE
         @mountpoint = 0 if @mountpoint == UNSET_VALUE
+        @mountoptions = 0 if @mountoptions == UNSET_VALUE
         @diskdevice = 0 if @diskdevice == UNSET_VALUE
         @filesystem = 0 if @filesystem == UNSET_VALUE
         @volgroupname = 0 if @volgroupname == UNSET_VALUE
