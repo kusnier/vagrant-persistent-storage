@@ -41,6 +41,7 @@ with entries added to fstab ... subsequent runs will mount this disk with the op
 
 * [madAndroid](https://github.com/madAndroid)
 * [Jeremiah Snapp](https://github.com/jeremiahsnapp)
+* [Hiroya Ito](https://github.com/hiboma)
 
 ## TODO
 
