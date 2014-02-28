@@ -23,7 +23,7 @@ config.persistent_storage.mountpoint = '/var/lib/mysql'
 config.persistent_storage.volgroupname = 'myvolgroup'
 ```
 
-With `config.persistent_storage.mountoptions` you can change the mount options (default: defaults). 
+With `config.persistent_storage.mountoptions` you can change the mount options (default: defaults).  
 A example which sets `prjquota` option with xfs.
 ```ruby
 config.persistent_storage.mountname    = 'xfs'
