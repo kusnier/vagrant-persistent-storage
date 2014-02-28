@@ -23,6 +23,15 @@ config.persistent_storage.mountpoint = '/var/lib/mysql'
 config.persistent_storage.volgroupname = 'myvolgroup'
 ```
 
+With `config.persistent_storage.mountoptions` you can change the mount options (default: defaults).
+A example which sets `prjquota` option with xfs.
+```ruby
+config.persistent_storage.mountname    = 'xfs'
+config.persistent_storage.filesystem   = 'xfs'
+config.persistent_storage.mountpoint   = '/mnt/xfs'
+config.persistent_storage.mountoptions = ['defaults', 'prjquota']
+```
+
 Device defaults to /dev/sdb
 
 Every `vagrant up` will attach this file as hard disk to the guest machine.
