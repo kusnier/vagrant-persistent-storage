@@ -115,7 +115,7 @@ module VagrantPlugins
         end
         
         mount_point_path = Pathname.new("#{machine.config.persistent_storage.location}")
-        if ! mount_point.path.absolute?
+        if ! mount_point_path.absolute?
           errors << I18n.t('vagrant_persistent_storage.config.not_a_path', {
             :config_key => 'persistent_storage.location',
             :is_path   => location.class.to_s,
