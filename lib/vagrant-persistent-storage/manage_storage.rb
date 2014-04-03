@@ -70,13 +70,13 @@ exit $?
         EOF
 
         buffer = disk_operations_template.result(binding)
-        tmp_script = "/tmp/disk_operations_#{mnt_name}.sh"
+        tmp_script = Tempfile.new("disk_operations_#{mnt_name}.sh")
         target_script = "/tmp/disk_operations_#{mnt_name}.sh"
 
-        File.open("#{tmp_script}", 'wb') do |f|
+        File.open("#{tmp_script.path}", 'wb') do |f|
             f.write buffer
         end
-        m.communicate.upload(tmp_script, target_script)
+        m.communicate.upload(tmp_script.path, target_script)
         m.communicate.sudo("chmod 755 #{target_script}")
       end
 
