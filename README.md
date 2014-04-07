@@ -52,6 +52,7 @@ with entries added to fstab ... subsequent runs will mount this disk with the op
 * [Jeremiah Snapp](https://github.com/jeremiahsnapp)
 * [Hiroya Ito](https://github.com/hiboma)
 * [joshuata](https://github.com/joshuata)
+* [Ciprian Zaharie](https://github.com/bucatzel)
 
 ## TODO
 
