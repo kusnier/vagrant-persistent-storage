@@ -6,12 +6,12 @@ module VagrantPlugins
       class Base
 
         def create_adapter
-          sata_controller_name = get_sata_controller_name
-          if sata_controller_name.nil?
-            sata_controller_name = "SATA Controller"
-            execute("storagectl", @uuid, "--name", sata_controller_name, "--" + (@version.start_with?("4.3") ? "" : "sata") + "portcount", "2", "--add", "sata")
+          controller_name = get_controller_name
+          if controller_name.nil?
+            controller_name = "SATA Controller"
+            execute("storagectl", @uuid, "--name", controller_name, "--" + (@version.start_with?("4.3") ? "" : "sata") + "portcount", "2", "--add", "sata")
           else
-            execute("storagectl", @uuid, "--name", sata_controller_name, "--" + (@version.start_with?("4.3") ? "" : "sata") + "portcount", "2")
+            execute("storagectl", @uuid, "--name", controller_name, "--" + (@version.start_with?("4.3") ? "" : "sata") + "portcount", "2")
           end
         end
 
@@ -20,13 +20,13 @@ module VagrantPlugins
         end
 
         def attach_storage(location)
-          execute("storageattach", @uuid, "--storagectl", get_sata_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
+          execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
         end
 
         def detach_storage(location)
           persistent_storage = read_persistent_storage()
           if location and persistent_storage != "none" and identical_files(persistent_storage, location)
-            execute("storageattach", @uuid, "--storagectl", get_sata_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "none")
+            execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "none")
           end
         end
 
@@ -35,7 +35,7 @@ module VagrantPlugins
           sleep 3
           info = execute("showvminfo", @uuid, "--machinereadable", :retryable => true)
           info.split("\n").each do |line|
-            return $1.to_s if line =~ /^"#{get_sata_controller_name}-1-0"="(.+?)"$/
+            return $1.to_s if line =~ /^"#{get_controller_name}-1-0"="(.+?)"$/
           end
           nil
         end
@@ -44,15 +44,20 @@ module VagrantPlugins
           return File.identical?(Pathname.new(file1).realpath, Pathname.new(file2).realpath)
         end
 
-        def get_sata_controller_name
+        def get_controller_name
+        controller_number = nil
           controllers = Hash.new
           info = execute("showvminfo", @uuid, "--machinereadable", :retryable => true)
           info.split("\n").each do |line|
             controllers[$1] = $2 if line =~ /^storagecontrollername(\d+)="(.*)"/
-            sata_controller_number = $1 if line =~ /^storagecontrollertype(\d+)="IntelAhci"/
-            return controllers[sata_controller_number] unless controllers[sata_controller_number].nil?
+            controller_number = $1 if line =~ /^storagecontrollertype(\d+)="(IntelAhci|PIIX4)"/
           end
-          return nil
+
+          if controller_number.nil?
+            return nil
+          end
+
+          return controllers[controller_number]
         end
 
       end
