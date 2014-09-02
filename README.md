@@ -42,6 +42,10 @@ The disk is initialized and added to it's own volume group as specfied in the co
 this defaults to 'vagrant'. An ext4 filesystem is created and the disk mounted appropriately,
 with entries added to fstab ... subsequent runs will mount this disk with the options specified
 
+## Troubleshooting
+
+If your box are not using LVM you must set `config.persistent_storage.use_lvm = false`.
+
 ## Supported Providers
 
 * Only the VirtualBox provider is supported.
