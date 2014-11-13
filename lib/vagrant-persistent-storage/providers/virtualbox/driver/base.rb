@@ -25,7 +25,7 @@ module VagrantPlugins
 
         def detach_storage(location)
           persistent_storage = read_persistent_storage()
-          if location and persistent_storage != "none" and identical_files(persistent_storage, location)
+          if location and persistent_storage and persistent_storage != "none" and identical_files(persistent_storage, location)
             execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "none")
           end
         end
