@@ -18,6 +18,7 @@ module VagrantPlugins
       attr_accessor :diskdevice
       attr_accessor :filesystem
       attr_accessor :volgroupname
+	  attr_accessor :drive_letter
 
       alias_method :create?, :create
       alias_method :mount?, :mount
@@ -41,6 +42,7 @@ module VagrantPlugins
         @diskdevice = UNSET_VALUE
         @filesystem = UNSET_VALUE
         @volgroupname = UNSET_VALUE
+		@drive_letter = UNSET_VALUE
       end
 
       def finalize!
@@ -58,6 +60,7 @@ module VagrantPlugins
         @diskdevice = 0 if @diskdevice == UNSET_VALUE
         @filesystem = 0 if @filesystem == UNSET_VALUE
         @volgroupname = 0 if @volgroupname == UNSET_VALUE
+		@drive_letter = 0 if @drive_letter == UNSET_VALUE
       end
 
       def validate(machine)
@@ -113,7 +116,7 @@ module VagrantPlugins
             :is_class   => volgroupname.class.to_s,
           })
         end
-        
+
         mount_point_path = Pathname.new("#{machine.config.persistent_storage.location}")
         if ! mount_point_path.absolute?
           errors << I18n.t('vagrant_persistent_storage.config.not_a_path', {
