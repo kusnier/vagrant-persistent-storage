@@ -5,7 +5,6 @@ require 'erb'
 module VagrantPlugins
   module PersistentStorage
     module ManageStorage
-
       def populate_template(m)
         mnt_name = m.config.persistent_storage.mountname
         mnt_point = m.config.persistent_storage.mountpoint
@@ -18,6 +17,15 @@ module VagrantPlugins
         mount = m.config.persistent_storage.mount
         format = m.config.persistent_storage.format
 
+		## windows filesystem options
+		drive_letter = m.config.persistent_storage.drive_letter
+
+		if m.config.vm.communicator == :winrm
+			os = "windows"
+		else
+			os = "linux"
+		end
+
         vg_name = 'vps' unless vg_name != 0
         disk_dev = '/dev/sdb' unless disk_dev != 0
         mnt_name = 'vps' unless mnt_name != 0
@@ -28,8 +36,25 @@ module VagrantPlugins
         else
           device = "#{disk_dev}1"
         end
-        
-        ## shell script to format disk, create/manage LVM, mount disk
+		if drive_letter == 0
+			drive_letter = ""
+		else
+			drive_letter = "letter=#{drive_letter}"
+		end
+		
+		if os == "windows"
+			## shell script for windows to create NTFS partition and assign drive letter
+			disk_operations_template = ERB.new <<-EOF
+			<% if format == true %>
+			foreach ($disk in get-wmiobject Win32_DiskDrive -Filter "Partitions = 0"){
+				$disk.DeviceID
+				$disk.Index
+				"select disk "+$disk.Index+"`r clean`r create partition primary`r format fs=ntfs unit=65536 quick`r active`r assign #{drive_letter}" | diskpart >> disk_operation_log.txt
+			}
+			<% end %>
+			EOF
+		else
+		## shell script to format disk, create/manage LVM, mount disk
         disk_operations_template = ERB.new <<-EOF
 #!/bin/bash
 # fdisk the disk if it's not a block device already:
@@ -69,24 +94,38 @@ echo "#{mnt_point} mounting returned:  $?" >> disk_operation_log.txt
 <% end %>
 exit $?
         EOF
+		end
 
         buffer = disk_operations_template.result(binding)
-        tmp_script = Tempfile.new("disk_operations_#{mnt_name}.sh")
-        target_script = "/tmp/disk_operations_#{mnt_name}.sh"
+		tmp_script = Tempfile.new("disk_operations_#{mnt_name}.sh")
+
+		if os == 'windows'
+			target_script = "disk_operations_#{mnt_name}.ps1"
+		else
+			target_script = "/tmp/disk_operations_#{mnt_name}.sh"
+		end
 
         File.open("#{tmp_script.path}", 'wb') do |f|
             f.write buffer
         end
         m.communicate.upload(tmp_script.path, target_script)
-        m.communicate.sudo("chmod 755 #{target_script}")
+		unless os == 'windows'
+			m.communicate.sudo("chmod 755 #{target_script}")
+		end
       end
 
       def run_disk_operations(m)
         return unless m.communicate.ready?
         mnt_name = m.config.persistent_storage.mountname
         mnt_name = 'vps' unless mnt_name != 0
-        target_script = "/tmp/disk_operations_#{mnt_name}.sh"
-        m.communicate.sudo("#{target_script}")
+		if m.config.vm.communicator == :winrm
+			target_script = "disk_operations_#{mnt_name}.ps1"
+			m.communicate.sudo("powershell -executionpolicy bypass -file #{target_script}")
+		else
+			target_script = "/tmp/disk_operations_#{mnt_name}.sh"
+			m.communicate.sudo("#{target_script}")
+		end
+
       end
 
       def manage_volumes(m)

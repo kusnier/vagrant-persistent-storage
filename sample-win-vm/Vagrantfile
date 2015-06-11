@@ -1,0 +1,22 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  # Every Vagrant virtual environment requires a box to build off of.
+  config.vm.box = "myWindowsBox"
+
+  # These are required for Windows machines running under vagrant
+  config.vm.communicator = "winrm"
+  config.winrm.username = "Administrator"
+  config.winrm.password = "Password!"
+
+  # configure a persistent storage for mysql data
+  config.persistent_storage.enabled = true
+  config.persistent_storage.location = "virtualdrive.vdi"
+  config.persistent_storage.size = 5000
+
+end
