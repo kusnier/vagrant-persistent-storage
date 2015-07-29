@@ -9,9 +9,9 @@ module VagrantPlugins
           controller_name = get_controller_name
           if controller_name.nil?
             controller_name = "SATA Controller"
-            execute("storagectl", @uuid, "--name", controller_name, "--" + (@version.start_with?("4.3") ? "" : "sata") + "portcount", "2", "--add", "sata")
+            execute("storagectl", @uuid, "--name", controller_name, "--" + ((@version.start_with?("4.3") || @version.start_with?("5.")) ? "" : "sata") + "portcount", "2", "--add", "sata")
           else
-            execute("storagectl", @uuid, "--name", controller_name, "--" + (@version.start_with?("4.3") ? "" : "sata") + "portcount", "2")
+            execute("storagectl", @uuid, "--name", controller_name, "--" + ((@version.start_with?("4.3") || @version.start_with?("5.")) ? "" : "sata") + "portcount", "2")
           end
         end
 
