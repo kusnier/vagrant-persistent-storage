@@ -60,10 +60,8 @@ module VagrantPlugins
 # fdisk the disk if it's not a block device already:
 [[ $("sfdisk" --version) =~ ([0-9][.][0-9.]*[.][0-9.]*) ]] && version="${BASH_REMATCH[1]}"
 if ! awk -v ver="$version" 'BEGIN { if (ver < 2.26 ) exit 1; }'; then
-	echo "old sfdisk $version"
 	[ -b #{disk_dev}1 ] || echo 0,,8e | sfdisk #{disk_dev}
 else
-	echo "new sfdisk $version"
 	[ -b #{disk_dev}1 ] || echo ,,8e | sfdisk #{disk_dev}
 fi
 echo "fdisk returned:  $?" >> disk_operation_log.txt
