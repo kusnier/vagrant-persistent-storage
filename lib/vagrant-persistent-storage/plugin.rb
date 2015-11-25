@@ -9,7 +9,6 @@ module VagrantPlugins
       require_relative "action"
       require_relative "providers/virtualbox/driver/base"
       require_relative "providers/virtualbox/driver/meta"
-      require_relative "providers/virtualbox/driver/version_5_0"
 
       name "persistent_storage"
       description <<-DESC

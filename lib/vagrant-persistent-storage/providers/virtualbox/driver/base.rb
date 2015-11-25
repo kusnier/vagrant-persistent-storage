@@ -20,7 +20,18 @@ module VagrantPlugins
         end
 
         def attach_storage(location)
-          execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
+          controller_name = get_controller_name
+          if controller_name.nil?
+            controller_name = "SATA Controller"
+          end
+
+          if controller_name == "IDE Controller"
+              execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
+          else
+              execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}", "--hotpluggable", "on")
+          end
+
+
         end
 
         def detach_storage(location)
