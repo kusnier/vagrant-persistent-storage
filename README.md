@@ -74,6 +74,7 @@ If your box are not using LVM you must set `config.persistent_storage.use_lvm = 
 * [Marsup](https://github.com/Marsup)
 * [k2s](https://github.com/k2s)
 * [vvavrychuk](https://github.com/vvavrychuk)
+* [Lars Hupfeldt Nielsen](https://github.com/lhupfeldt)
 
 ## TODO
 
