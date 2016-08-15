@@ -25,7 +25,7 @@ module VagrantPlugins
             controller_name = "SATA Controller"
           end
 
-          if controller_name == "IDE Controller"
+          if controller_name.start_with?("IDE")
               execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}")
           else
               execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location}", "--hotpluggable", "on")
