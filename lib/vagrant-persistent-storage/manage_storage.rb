@@ -32,7 +32,7 @@ module VagrantPlugins
         mnt_options = ['defaults'] unless mnt_options != 0
         fs_type = 'ext3' unless fs_type != 0
         if use_lvm
-          device = "/dev/#{vg_name}-vg1/#{mnt_name}"
+          device = "/dev/#{vg_name}/#{mnt_name}"
         else
           device = "#{disk_dev}1"
         end
@@ -71,13 +71,13 @@ echo "fdisk returned:  $?" >> disk_operation_log.txt
 [[ `pvs #{disk_dev}1` ]] || pvcreate #{disk_dev}1
 echo "pvcreate returned:  $?" >> disk_operation_log.txt
 # Create the volume group if it doesn't already exist:
-[[ `vgs #{vg_name}-vg1` ]] || vgcreate #{vg_name}-vg1 #{disk_dev}1
+[[ `vgs #{vg_name}` ]] || vgcreate #{vg_name} #{disk_dev}1
 echo "vgcreate returned:  $?" >> disk_operation_log.txt
 # Create the logical volume if it doesn't already exist:
-[[ `lvs #{vg_name}-vg1 | grep #{mnt_name}` ]] || lvcreate -l 100%FREE -n #{mnt_name} #{vg_name}-vg1
+[[ `lvs #{vg_name} | grep #{mnt_name}` ]] || lvcreate -l 100%FREE -n #{mnt_name} #{vg_name}
 echo "lvcreate returned:  $?" >> disk_operation_log.txt
 # Activate the volume group if it's inactive:
-[[ `lvs #{vg_name}-vg1 --noheadings --nameprefixes | grep LVM2_LV_ATTR | grep "wi\-a"` ]] || vgchange #{vg_name}-vg1 -a y
+[[ `lvs #{vg_name} --noheadings --nameprefixes | grep LVM2_LV_ATTR | grep "wi\-a"` ]] || vgchange #{vg_name} -a y
 echo "vg activation returned:  $?" >> disk_operation_log.txt
 <% end %>
 
