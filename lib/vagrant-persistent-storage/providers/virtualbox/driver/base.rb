@@ -29,7 +29,7 @@ module VagrantPlugins
           location_realpath = File.expand_path(location)
 
           if controller_name.start_with?("IDE")
-              execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "4", "--device", "0", "--type", "hdd", "--medium", "#{location_realpath}")
+              execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "2", "--device", "0", "--type", "hdd", "--medium", "#{location_realpath}")
           elsif controller_name.start_with?("SCSI")
               execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "15", "--device", "0", "--type", "hdd", "--medium", "#{location_realpath}")
           else
