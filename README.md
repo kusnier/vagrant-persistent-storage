@@ -1,7 +1,8 @@
 # Vagrant::Persistent-Storage
 
-
 A Vagrant plugin that creates a persistent storage and attaches it to guest machine.
+
+Requires Virtualbox 5
 
 ## Installation
 
