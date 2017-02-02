@@ -33,7 +33,10 @@ config.persistent_storage.mountpoint   = '/mnt/xfs'
 config.persistent_storage.mountoptions = ['defaults', 'prjquota']
 ```
 
-Device defaults to /dev/sdb
+Device defaults to `/dev/sdb`. For boxes with multiple disks, make sure you increment the drive:
+```
+config.persistent_storage.diskdevice = '/dev/sdc'
+```
 
 Every `vagrant up` will attach this file as hard disk to the guest machine.
 An `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
