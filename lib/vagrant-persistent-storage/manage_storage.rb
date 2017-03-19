@@ -58,7 +58,7 @@ module VagrantPlugins
         disk_operations_template = ERB.new <<-EOF
 #!/bin/bash
 # fdisk the disk if it's not a block device already:
-[[ $("sfdisk" --version) =~ ([0-9][.][0-9.]*[0-9.]*) ]] && version="${BASH_REMATCH[1]}"
+re='[0-9][.][0-9.]*[0-9.]*'; [[ $(sfdisk --version) =~ $re ]] && version="${BASH_REMATCH}"
 if ! awk -v ver="$version" 'BEGIN { if (ver < 2.26 ) exit 1; }'; then
 	[ -b #{disk_dev}1 ] || echo 0,,8e | sfdisk #{disk_dev}
 else
