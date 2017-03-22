@@ -65,7 +65,7 @@ module VagrantPlugins
         end
 
         def identical_files(file1, file2)
-          return File.identical?(Pathname.new(file1).realpath, Pathname.new(file2).realpath)
+          return (File.exist?(file1) and File.exist?(file2) and File.identical?(Pathname.new(file1).realpath, Pathname.new(file2).realpath))
         end
 
         def get_controller_name
