@@ -14,6 +14,7 @@ module VagrantPlugins
         fs_type = m.config.persistent_storage.filesystem
         manage = m.config.persistent_storage.manage
         use_lvm = m.config.persistent_storage.use_lvm
+        partition = m.config.persistent_storage.partition
         mount = m.config.persistent_storage.mount
         format = m.config.persistent_storage.format
 
@@ -41,10 +42,11 @@ module VagrantPlugins
 		else
 			drive_letter = "letter=#{drive_letter}"
 		end
-		
+
 		if os == "windows"
 			## shell script for windows to create NTFS partition and assign drive letter
 			disk_operations_template = ERB.new <<-EOF
+      <% if partition == true %>
 			<% if format == true %>
 			foreach ($disk in get-wmiobject Win32_DiskDrive -Filter "Partitions = 0"){
 				$disk.DeviceID
@@ -52,11 +54,13 @@ module VagrantPlugins
 				"select disk "+$disk.Index+"`r clean`r create partition primary`r format fs=ntfs unit=65536 quick`r active`r assign #{drive_letter}" | diskpart >> disk_operation_log.txt
 			}
 			<% end %>
+			<% end %>
 			EOF
 		else
 		## shell script to format disk, create/manage LVM, mount disk
         disk_operations_template = ERB.new <<-EOF
 #!/bin/bash
+<% if partition == true %>
 # fdisk the disk if it's not a block device already:
 re='[0-9][.][0-9.]*[0-9.]*'; [[ $(sfdisk --version) =~ $re ]] && version="${BASH_REMATCH}"
 if ! awk -v ver="$version" 'BEGIN { if (ver < 2.26 ) exit 1; }'; then
@@ -96,6 +100,9 @@ echo "fstab update returned:  $?" >> disk_operation_log.txt
 [[ `mount | grep #{mnt_point}` ]] || mount #{mnt_point}
 echo "#{mnt_point} mounting returned:  $?" >> disk_operation_log.txt
 <% end %>
+<% end %>
+<% else %>
+echo "nothing to prepare on #{disk_dev}" >> disk_operation_log.txt
 <% end %>
 exit $?
         EOF
