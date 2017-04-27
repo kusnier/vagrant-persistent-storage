@@ -18,7 +18,7 @@ module VagrantPlugins
       attr_accessor :diskdevice
       attr_accessor :filesystem
       attr_accessor :volgroupname
-	  attr_accessor :drive_letter
+  	  attr_accessor :drive_letter
 
       alias_method :create?, :create
       alias_method :mount?, :mount
@@ -28,7 +28,7 @@ module VagrantPlugins
       alias_method :enabled?, :enabled
 
       def initialize
-        @size = UNSET_VALUE
+        @size = 0
         @create = true
         @mount = true
         @manage = true
@@ -42,7 +42,64 @@ module VagrantPlugins
         @diskdevice = UNSET_VALUE
         @filesystem = UNSET_VALUE
         @volgroupname = UNSET_VALUE
-		@drive_letter = UNSET_VALUE
+    		@drive_letter = UNSET_VALUE
+      end
+
+      def merge(other)
+        super.tap do |result|
+
+          if other.size.kind_of?(Integer) and other.size > 0
+            @size = other.size
+          end
+
+          if other.location.kind_of?(String)
+            @location = other.location
+          end
+
+          if other.mountname.kind_of?(String)
+            @mountname = other.mountname
+          end
+
+          if other.mountpoint.kind_of?(String)
+            @mountpoint = other.mountpoint
+          end
+
+          if other.mountoptions.kind_of?(String)
+            @mountoptions = other.mountoptions
+          end
+
+          if other.diskdevice.kind_of?(String)
+            @diskdevice = other.diskdevice
+          end
+
+          if other.filesystem.kind_of?(String)
+            @filesystem = other.filesystem
+          end
+
+          if other.volgroupname.kind_of?(String)
+            @volgroupname = other.volgroupname
+          end
+
+          if other.drive_letter.kind_of?(String)
+            @drive_letter = other.drive_letter
+          end
+
+          result.size         = @size
+          result.create       = [@create, other.create].all?
+          result.mount        = [@mount, other.mount].all?
+          result.manage       = [@manage, other.manage].all?
+          result.format       = [@format, other.format].all?
+          result.use_lvm      = [@format, other.use_lvm].all?
+          result.enabled      = [@enabled, other.enabled].any?
+          result.location     = @location
+          result.mountname    = @mountname
+          result.mountpoint   = @mountpoint
+          result.mountoptions = @mountoptions
+          result.diskdevice   = @diskdevice
+          result.filesystem   = @filesystem
+          result.volgroupname = @volgroupname
+          result.drive_letter = @drive_letter
+        end
       end
 
       def finalize!
@@ -60,7 +117,7 @@ module VagrantPlugins
         @diskdevice = 0 if @diskdevice == UNSET_VALUE
         @filesystem = 0 if @filesystem == UNSET_VALUE
         @volgroupname = 0 if @volgroupname == UNSET_VALUE
-		@drive_letter = 0 if @drive_letter == UNSET_VALUE
+    		@drive_letter = 0 if @drive_letter == UNSET_VALUE
       end
 
       def validate(machine)
@@ -68,16 +125,16 @@ module VagrantPlugins
 
         errors << validate_bool('persistent_storage.create', @create)
         errors << validate_bool('persistent_storage.mount', @mount)
-        errors << validate_bool('persistent_storage.mount', @manage)
-        errors << validate_bool('persistent_storage.mount', @format)
-        errors << validate_bool('persistent_storage.mount', @use_lvm)
-        errors << validate_bool('persistent_storage.mount', @enabled)
+        errors << validate_bool('persistent_storage.manage', @manage)
+        errors << validate_bool('persistent_storage.format', @format)
+        errors << validate_bool('persistent_storage.use_lvm', @use_lvm)
+        errors << validate_bool('persistent_storage.enabled', @enabled)
         errors.compact!
 
-        if !machine.config.persistent_storage.size.kind_of?(String)
-          errors << I18n.t('vagrant_persistent_storage.config.not_a_string', {
+        if !machine.config.persistent_storage.size.kind_of?(Integer)
+          errors << I18n.t('vagrant_persistent_storage.config.not_a_integer', {
             :config_key => 'persistent_storage.size',
-            :is_class   => size.class.to_s,
+            :is_class   => size.class.to_i,
           })
         end
         if !machine.config.persistent_storage.location.kind_of?(String)
