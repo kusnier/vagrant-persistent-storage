@@ -1,12 +1,9 @@
 require "log4r"
-require 'vagrant-persistent-storage/manage_storage'
 
 module VagrantPlugins
   module PersistentStorage
     module Action
       class ManageAll
-
-        include ManageStorage
 
         def initialize(app, env)
           @app = app
@@ -25,9 +22,25 @@ module VagrantPlugins
           return @app.call(env) if @machine.state.id == :poweroff && env[:machine_action] == :resume
           # skip if machine is powered off and the action is resume
           return @app.call(env) if @machine.state.id == :saved && env[:machine_action] == :resume
-          
+
           return @app.call(env) unless env[:machine].config.persistent_storage.enabled?
           return @app.call(env) unless env[:machine].config.persistent_storage.manage?
+
+          guest_name = @machine.guest.name if @machine.guest.respond_to?(:name)
+          guest_name ||= @machine.guest.to_s.downcase
+
+          case guest_name
+            when /freebsd/
+              env[:ui].info I18n.t('vagrant_persistent_storage.guest.freebsd')
+              require 'vagrant-persistent-storage/cap/freebsd/manage_storage'
+            when /windows/
+              env[:ui].info I18n.t('vagrant_persistent_storage.guest.windows')
+              require 'vagrant-persistent-storage/cap/windows/manage_storage'
+            else
+              env[:ui].info I18n.t('vagrant_persistent_storage.guest.linux')
+              require 'vagrant-persistent-storage/cap/linux/manage_storage'
+          end
+
           @logger.info '** Managing Persistent Storage **'
 
           env[:ui].info I18n.t('vagrant_persistent_storage.action.manage_storage')
