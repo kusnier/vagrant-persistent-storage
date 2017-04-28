@@ -10,3 +10,8 @@ en:
     config:
       not_a_bool: "A value for %{config_key} can only be true or false, not type '%{value}'"
       not_an_array_or_string: "A value for %{config_key} must be an Array or String, not type '%{is_class}'"
+    guest:
+      windows: "** Loading Windows guest capabilities **"
+      freebsd: "** Loading FreeBSD guest capabilities **"
+      linux: "** Loading Linux guest capabilities **"
+
