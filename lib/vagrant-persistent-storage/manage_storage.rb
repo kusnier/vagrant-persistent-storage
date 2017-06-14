@@ -60,11 +60,6 @@ module VagrantPlugins
 		## shell script to format disk, create/manage LVM, mount disk
         disk_operations_template = ERB.new <<-EOF
 #!/bin/bash
-# partition == #{partition}
-# use_lvm == #{use_lvm}
-# format == #{format}
-
-
 <% if partition == true %>
 # fdisk the disk if it's not a block device already:
 re='[0-9][.][0-9.]*[0-9.]*'; [[ $(sfdisk --version) =~ $re ]] && version="${BASH_REMATCH}"
