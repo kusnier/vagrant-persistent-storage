@@ -19,7 +19,8 @@ module VagrantPlugins
       attr_accessor :diskdevice
       attr_accessor :filesystem
       attr_accessor :volgroupname
-	  attr_accessor :drive_letter
+      attr_accessor :drive_letter
+      attr_accessor :part_type_code
 
       alias_method :create?, :create
       alias_method :mount?, :mount
@@ -45,7 +46,8 @@ module VagrantPlugins
         @diskdevice = UNSET_VALUE
         @filesystem = UNSET_VALUE
         @volgroupname = UNSET_VALUE
-		@drive_letter = UNSET_VALUE
+        @drive_letter = UNSET_VALUE
+        @part_type_code = UNSET_VALUE
       end
 
       def finalize!
@@ -64,7 +66,8 @@ module VagrantPlugins
         @diskdevice = "" if @diskdevice == UNSET_VALUE
         @filesystem = "" if @filesystem == UNSET_VALUE
         @volgroupname = "" if @volgroupname == UNSET_VALUE
-		@drive_letter = 0 if @drive_letter == UNSET_VALUE
+		    @drive_letter = 0 if @drive_letter == UNSET_VALUE
+        @part_type_code = "8e" if @part_type_code == UNSET_VALUE
       end
 
       def validate(machine)
@@ -113,6 +116,12 @@ module VagrantPlugins
           errors << I18n.t('vagrant_persistent_storage.config.not_a_string', {
             :config_key => 'persistent_storage.filesystem',
             :is_class   => filesystem.class.to_s,
+          })
+        end
+	if !machine.config.persistent_storage.volgroupname.part_type_code?(String)
+          errors << I18n.t('vagrant_persistent_storage.config.not_a_string', {
+            :config_key => 'persistent_storage.part_type_code',
+            :is_class   => volgroupname.class.to_s,
           })
         end
         if !machine.config.persistent_storage.volgroupname.kind_of?(String)
