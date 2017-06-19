@@ -34,28 +34,39 @@ config.persistent_storage.mountoptions = ['defaults', 'prjquota']
 ```
 
 Device defaults to `/dev/sdb`. For boxes with multiple disks, make sure you increment the drive:
-```
+```ruby
 config.persistent_storage.diskdevice = '/dev/sdc'
 ```
 
+If you are using LVM and you would prefer to use the disk rather than a partition, you can set the following configuration:
+```ruby
+config.persistent_storage.partition = false
+```
+
 Every `vagrant up` will attach this file as hard disk to the guest machine.
-An `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
+A `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
 A `vagrant destroy` generally destroys all attached drives. See [VBoxMange unregistervm --delete option][vboxmanage_delete].
 
 The disk is initialized and added to it's own volume group as specfied in the config; 
 this defaults to 'vagrant'. An ext4 filesystem is created and the disk mounted appropriately,
-with entries added to fstab ... subsequent runs will mount this disk with the options specified
+with entries added to fstab ... subsequent runs will mount this disk with the options specified.
 
 ## Windows Guests
 
 Windows Guests must use the WinRM communicator by setting `vm.communicator = 'winrm'`.  An additional option is provided to 
 allow you to set the drive letter using:
 
-```
+```ruby
 config.persistent_storage.drive_letter = 'Z'
 ```
 
 Options that are irrelevent to Windows are ignored, such as `mountname`, `filesystem`, `mountpoint` and `volgroupname`.
+
+## How Is The Storage Created?
+
+Based on the configuration provided, during a `vagrant up` a bash script is generated and uploaded to `/tmp/disk_operations_#{mnt_name}.sh` (Linux) or `disk_operations_#{mnt_name}.ps1` (Windows).  If the box has not been previously provisioned the script is executed on a `vagrant up`.  To force the scrip to be executed again you can run `vagrant provision` or if you have halted the box, `vagrant up --provision`.
+
+The outcome of the script being run is placed in the home drive of the vagrant user in a file called `disk_operation_log.txt`.
 
 ## Optional settings
 
