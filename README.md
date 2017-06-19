@@ -57,6 +57,12 @@ config.persistent_storage.drive_letter = 'Z'
 
 Options that are irrelevent to Windows are ignored, such as `mountname`, `filesystem`, `mountpoint` and `volgroupname`.
 
+## Optional settings
+
+```ruby
+config.persistent_storage.part_type_code = '82'
+```
+
 ## Troubleshooting
 
 If your box are not using LVM you must set `config.persistent_storage.use_lvm = false`.
@@ -82,6 +88,7 @@ If your box are not using LVM you must set `config.persistent_storage.use_lvm = 
 * [Chen Yu Pao](https://github.com/windperson)
 * [Kris Reese](https://github.com/ktreese)
 * [Henry N.](https://github.com/HenryNe)
+* [fredleger](https://github.com/fredleger)
 
 ## TODO
 
