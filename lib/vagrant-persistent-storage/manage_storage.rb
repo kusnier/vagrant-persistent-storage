@@ -16,6 +16,7 @@ module VagrantPlugins
         use_lvm = m.config.persistent_storage.use_lvm
         mount = m.config.persistent_storage.mount
         format = m.config.persistent_storage.format
+	part_type_code = m.config.persistent_storage.part_type_code
 
 		## windows filesystem options
 		drive_letter = m.config.persistent_storage.drive_letter
@@ -60,9 +61,9 @@ module VagrantPlugins
 # fdisk the disk if it's not a block device already:
 re='[0-9][.][0-9.]*[0-9.]*'; [[ $(sfdisk --version) =~ $re ]] && version="${BASH_REMATCH}"
 if ! awk -v ver="$version" 'BEGIN { if (ver < 2.26 ) exit 1; }'; then
-	[ -b #{disk_dev}1 ] || echo 0,,8e | sfdisk #{disk_dev}
+	[ -b #{disk_dev}1 ] || echo 0,,#{part_type_code} | sfdisk #{disk_dev}
 else
-	[ -b #{disk_dev}1 ] || echo ,,8e | sfdisk #{disk_dev}
+	[ -b #{disk_dev}1 ] || echo ,,#{part_type_code} | sfdisk #{disk_dev}
 fi
 echo "fdisk returned:  $?" >> disk_operation_log.txt
 
