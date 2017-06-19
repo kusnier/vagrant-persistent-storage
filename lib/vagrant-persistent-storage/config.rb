@@ -15,7 +15,6 @@ module VagrantPlugins
       attr_accessor :mountname
       attr_accessor :mountpoint
       attr_accessor :mountoptions
-      attr_accessor :partition
       attr_accessor :diskdevice
       attr_accessor :filesystem
       attr_accessor :volgroupname
@@ -27,7 +26,6 @@ module VagrantPlugins
       alias_method :manage?, :manage
       alias_method :format?, :format
       alias_method :use_lvm?, :use_lvm
-      alias_method :partition?, :partition
       alias_method :enabled?, :enabled
 
       def initialize
@@ -38,7 +36,6 @@ module VagrantPlugins
         @format = true
         @use_lvm = true
         @enabled = false
-        @partition = true
         @location = UNSET_VALUE
         @mountname = UNSET_VALUE
         @mountpoint = UNSET_VALUE
@@ -57,7 +54,6 @@ module VagrantPlugins
         @manage = true if @manage == UNSET_VALUE
         @format = true if @format == UNSET_VALUE
         @use_lvm = true if @use_lvm == UNSET_VALUE
-        @partition = true if @partition == UNSET_VALUE
         @enabled = false if @enabled == UNSET_VALUE
         @location = 0 if @location == UNSET_VALUE
         @mountname = 0 if @mountname == UNSET_VALUE
@@ -79,7 +75,6 @@ module VagrantPlugins
         errors << validate_bool('persistent_storage.mount', @format)
         errors << validate_bool('persistent_storage.mount', @use_lvm)
         errors << validate_bool('persistent_storage.mount', @enabled)
-        errors << validate_bool('persistent_storage.mount', @partition)
         errors.compact!
 
         if !machine.config.persistent_storage.size.kind_of?(String)
