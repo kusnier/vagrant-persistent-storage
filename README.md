@@ -57,12 +57,6 @@ config.persistent_storage.drive_letter = 'Z'
 
 Options that are irrelevent to Windows are ignored, such as `mountname`, `filesystem`, `mountpoint` and `volgroupname`.
 
-## No partition option
-
-```ruby
-config.persistent_storage.partition = true
-```
-
 ## Optional settings
 
 ```ruby
