@@ -62,7 +62,6 @@ config.persistent_storage.drive_letter = 'Z'
 
 Options that are irrelevent to Windows are ignored, such as `mountname`, `filesystem`, `mountpoint` and `volgroupname`.
 
-
 ## How Is The Storage Created?
 
 Based on the configuration provided, during a `vagrant up` a bash script is generated and uploaded to `/tmp/disk_operations_#{mnt_name}.sh` (Linux) or `disk_operations_#{mnt_name}.ps1` (Windows).  If the box has not been previously provisioned the script is executed on a `vagrant up`.  To force the scrip to be executed again you can run `vagrant provision` or if you have halted the box, `vagrant up --provision`.
