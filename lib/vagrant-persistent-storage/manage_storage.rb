@@ -14,7 +14,6 @@ module VagrantPlugins
         fs_type = m.config.persistent_storage.filesystem
         manage = m.config.persistent_storage.manage
         use_lvm = m.config.persistent_storage.use_lvm
-        partition = m.config.persistent_storage.partition
         mount = m.config.persistent_storage.mount
         format = m.config.persistent_storage.format
 	part_type_code = m.config.persistent_storage.part_type_code
@@ -47,7 +46,6 @@ module VagrantPlugins
 		if os == "windows"
 			## shell script for windows to create NTFS partition and assign drive letter
 			disk_operations_template = ERB.new <<-EOF
-      	<% if partition == true %>
 			<% if format == true %>
 			foreach ($disk in get-wmiobject Win32_DiskDrive -Filter "Partitions = 0"){
 				$disk.DeviceID
@@ -55,13 +53,11 @@ module VagrantPlugins
 				"select disk "+$disk.Index+"`r clean`r create partition primary`r format fs=ntfs unit=65536 quick`r active`r assign #{drive_letter}" | diskpart >> disk_operation_log.txt
 			}
 			<% end %>
-		<% end %>
 			EOF
 		else
 		## shell script to format disk, create/manage LVM, mount disk
         disk_operations_template = ERB.new <<-EOF
 #!/bin/bash
-<% if partition == true %>
 # fdisk the disk if it's not a block device already:
 re='[0-9][.][0-9.]*[0-9.]*'; [[ $(sfdisk --version) =~ $re ]] && version="${BASH_REMATCH}"
 if ! awk -v ver="$version" 'BEGIN { if (ver < 2.26 ) exit 1; }'; then
@@ -70,15 +66,13 @@ else
 	[ -b #{disk_dev}1 ] || echo ,,#{part_type_code} | sfdisk #{disk_dev}
 fi
 echo "fdisk returned:  $?" >> disk_operation_log.txt
-disk_dev=#{disk_dev}1
-<% end %>
 
 <% if use_lvm == true %>
 # Create the physical volume if it doesn't already exist:
-[[ `pvs #{disk_dev}` ]] || pvcreate #{disk_dev}
+[[ `pvs #{disk_dev}1` ]] || pvcreate #{disk_dev}1
 echo "pvcreate returned:  $?" >> disk_operation_log.txt
 # Create the volume group if it doesn't already exist:
-[[ `vgs #{vg_name}` ]] || vgcreate #{vg_name} #{disk_dev}
+[[ `vgs #{vg_name}` ]] || vgcreate #{vg_name} #{disk_dev}1
 echo "vgcreate returned:  $?" >> disk_operation_log.txt
 # Create the logical volume if it doesn't already exist:
 [[ `lvs #{vg_name} | grep #{mnt_name}` ]] || lvcreate -l 100%FREE -n #{mnt_name} #{vg_name}
@@ -90,7 +84,7 @@ echo "vg activation returned:  $?" >> disk_operation_log.txt
 
 <% if format == true  %>
 # Create the filesytem if it doesn't already exist
-MNT_NAME=#{vg_name}-#{mnt_name}
+MNT_NAME=#{mnt_name}
 [[ `blkid | grep ${MNT_NAME:0:16} | grep #{fs_type}` ]] || mkfs.#{fs_type} -L #{mnt_name} #{device}
 echo "#{fs_type} creation return:  $?" >> disk_operation_log.txt
 <% if mount == true %>
