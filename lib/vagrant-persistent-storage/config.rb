@@ -113,10 +113,10 @@ module VagrantPlugins
             :is_class   => filesystem.class.to_s,
           })
         end
-	if !machine.config.persistent_storage.volgroupname.part_type_code?(String)
+        if !machine.config.persistent_storage.part_type_code?(String)
           errors << I18n.t('vagrant_persistent_storage.config.not_a_string', {
             :config_key => 'persistent_storage.part_type_code',
-            :is_class   => volgroupname.class.to_s,
+            :is_class   => part_type_code.class.to_s,
           })
         end
         if !machine.config.persistent_storage.volgroupname.kind_of?(String)
