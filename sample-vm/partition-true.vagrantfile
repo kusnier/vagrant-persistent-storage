@@ -22,4 +22,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.persistent_storage.mountpoint = '/var/lib/mysql'
   config.persistent_storage.volgroupname = 'myvolgroup'
 
-end
+  config.vm.provision "fix-no-tty", type: "shell" do |s|
+      s.privileged = false
+      s.inline = "sudo sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile"
+    end
+  end
