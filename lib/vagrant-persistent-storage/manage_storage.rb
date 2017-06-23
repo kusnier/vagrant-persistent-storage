@@ -14,9 +14,10 @@ module VagrantPlugins
         fs_type = m.config.persistent_storage.filesystem
         manage = m.config.persistent_storage.manage
         use_lvm = m.config.persistent_storage.use_lvm
+        partition = m.config.persistent_storage.partition
         mount = m.config.persistent_storage.mount
         format = m.config.persistent_storage.format
-	part_type_code = m.config.persistent_storage.part_type_code
+				part_type_code = m.config.persistent_storage.part_type_code
 
 		## windows filesystem options
 		drive_letter = m.config.persistent_storage.drive_letter
@@ -27,16 +28,16 @@ module VagrantPlugins
 			os = "linux"
 		end
 
-        vg_name = 'vps' unless vg_name != 0
-        disk_dev = '/dev/sdb' unless disk_dev != 0
-        mnt_name = 'vps' unless mnt_name != 0
-        mnt_options = ['defaults'] unless mnt_options != 0
-        fs_type = 'ext3' unless fs_type != 0
-        if use_lvm
-          device = "/dev/#{vg_name}/#{mnt_name}"
-        else
-          device = "#{disk_dev}1"
-        end
+    vg_name = 'vps' unless vg_name != ""
+    disk_dev = '/dev/sdb' unless disk_dev != ""
+    mnt_name = 'vps' unless mnt_name != ""
+    mnt_options = ['defaults'] unless mnt_options.any?
+    fs_type = 'ext3' unless fs_type != ""
+    if use_lvm
+      device = "/dev/#{vg_name}/#{mnt_name}"
+    else
+      device = "#{disk_dev}1"
+    end
 		if drive_letter == 0
 			drive_letter = ""
 		else
@@ -46,6 +47,7 @@ module VagrantPlugins
 		if os == "windows"
 			## shell script for windows to create NTFS partition and assign drive letter
 			disk_operations_template = ERB.new <<-EOF
+      <% if partition == true %>
 			<% if format == true %>
 			foreach ($disk in get-wmiobject Win32_DiskDrive -Filter "Partitions = 0"){
 				$disk.DeviceID
@@ -53,26 +55,31 @@ module VagrantPlugins
 				"select disk "+$disk.Index+"`r clean`r create partition primary`r format fs=ntfs unit=65536 quick`r active`r assign #{drive_letter}" | diskpart >> disk_operation_log.txt
 			}
 			<% end %>
+			<% end %>
 			EOF
 		else
 		## shell script to format disk, create/manage LVM, mount disk
         disk_operations_template = ERB.new <<-EOF
 #!/bin/bash
+DISK_DEV=#{disk_dev}
+<% if partition == true %>
 # fdisk the disk if it's not a block device already:
 re='[0-9][.][0-9.]*[0-9.]*'; [[ $(sfdisk --version) =~ $re ]] && version="${BASH_REMATCH}"
 if ! awk -v ver="$version" 'BEGIN { if (ver < 2.26 ) exit 1; }'; then
-	[ -b #{disk_dev}1 ] || echo 0,,#{part_type_code} | sfdisk #{disk_dev}
+	[ -b ${DISK_DEV}1 ] || echo 0,,#{part_type_code} | sfdisk $DISK_DEV
 else
-	[ -b #{disk_dev}1 ] || echo ,,#{part_type_code} | sfdisk #{disk_dev}
+	[ -b ${DISK_DEV}1 ] || echo ,,#{part_type_code} | sfdisk $DISK_DEV
 fi
 echo "fdisk returned:  $?" >> disk_operation_log.txt
+DISK_DEV=${DISK_DEV}1
+<% end %>
 
 <% if use_lvm == true %>
 # Create the physical volume if it doesn't already exist:
-[[ `pvs #{disk_dev}1` ]] || pvcreate #{disk_dev}1
+[[ `pvs $DISK_DEV` ]] || pvcreate $DISK_DEV
 echo "pvcreate returned:  $?" >> disk_operation_log.txt
 # Create the volume group if it doesn't already exist:
-[[ `vgs #{vg_name}` ]] || vgcreate #{vg_name} #{disk_dev}1
+[[ `vgs #{vg_name}` ]] || vgcreate #{vg_name} $DISK_DEV
 echo "vgcreate returned:  $?" >> disk_operation_log.txt
 # Create the logical volume if it doesn't already exist:
 [[ `lvs #{vg_name} | grep #{mnt_name}` ]] || lvcreate -l 100%FREE -n #{mnt_name} #{vg_name}
@@ -84,7 +91,7 @@ echo "vg activation returned:  $?" >> disk_operation_log.txt
 
 <% if format == true  %>
 # Create the filesytem if it doesn't already exist
-MNT_NAME=#{mnt_name}
+MNT_NAME=#{vg_name}-#{mnt_name}
 [[ `blkid | grep ${MNT_NAME:0:16} | grep #{fs_type}` ]] || mkfs.#{fs_type} -L #{mnt_name} #{device}
 echo "#{fs_type} creation return:  $?" >> disk_operation_log.txt
 <% if mount == true %>

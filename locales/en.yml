@@ -9,4 +9,8 @@ en:
       manage_storage: "** Managing persistent storage **"
     config:
       not_a_bool: "A value for %{config_key} can only be true or false, not type '%{value}'"
-      not_an_array_or_string: "A value for %{config_key} must be an Array or String, not type '%{is_class}'"
+      not_an_array_or_string: "A value for %{config_key} must be an Array or String, not type '%{value}'"
+      not_a_string: "A value for %{config_key} must be a String, not type '%{value}'"
+      not_a_path: "A value for %{config_key} must be resolveable as a path"
+      not_a_number: "A value for %{config_key} must be a number, not type '%{value}'"
+      no_create_and_missing: "File doesn't exist, and create set to false"
