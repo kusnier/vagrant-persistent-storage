@@ -130,7 +130,7 @@ exit $?
       def run_disk_operations(m)
         return unless m.communicate.ready?
         mnt_name = m.config.persistent_storage.mountname
-        mnt_name = 'vps' unless mnt_name != 0
+        mnt_name = 'vps' unless mnt_name != ""
 		if m.config.vm.communicator == :winrm
 			target_script = "disk_operations_#{mnt_name}.ps1"
 			m.communicate.sudo("powershell -executionpolicy bypass -file #{target_script}")
