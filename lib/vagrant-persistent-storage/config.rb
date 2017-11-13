@@ -82,7 +82,7 @@ module VagrantPlugins
         errors << validate_bool('persistent_storage.partition', @partition)
         errors.compact!
 
-        if !machine.config.persistent_storage.size.kind_of?(Fixnum)
+        if !machine.config.persistent_storage.size.kind_of?(Integer)
           errors << I18n.t('vagrant_persistent_storage.config.not_a_number', {
             :config_key => 'persistent_storage.size',
             :is_class   => size.class.to_s,
@@ -123,7 +123,7 @@ module VagrantPlugins
              :config_key => 'persistent_storage.part_type_code',
              :is_class   => part_type_code.class.to_s,
            })
-         end
+        end
         if !machine.config.persistent_storage.volgroupname.kind_of?(String)
           errors << I18n.t('vagrant_persistent_storage.config.not_a_string', {
             :config_key => 'persistent_storage.volgroupname',
