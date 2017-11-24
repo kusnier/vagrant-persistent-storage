@@ -37,7 +37,7 @@ module VagrantPlugins
         @manage = true
         @format = true
         @use_lvm = true
-        @enabled = false
+        @enabled = false if @enabled == UNSET_VALUE
         @partition = true
         @location = UNSET_VALUE
         @mountname = UNSET_VALUE
@@ -143,7 +143,7 @@ module VagrantPlugins
           errors << I18n.t('vagrant_persistent_storage.config.no_create_and_missing', {
             :config_key => 'persistent_storage.create',
             :is_path   => location.class.to_s,
-          })       
+          })
         end
 
         { 'Persistent Storage configuration' => errors }
