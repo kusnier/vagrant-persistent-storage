@@ -104,6 +104,7 @@ If your box are not using LVM you must set `config.persistent_storage.use_lvm = 
 * [Ben Phegan](https://github.com/BenPhegan)
 * [Philipp Schrader](https://github.com/philsc)
 * [Alex Tomkins](https://github.com/tomkins)
+* [Marcin Wolny](https://github.com/mwolny)
 
 ## TODO
 
