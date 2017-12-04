@@ -37,7 +37,7 @@ module VagrantPlugins
         @manage = true
         @format = true
         @use_lvm = true
-        @enabled = false if @enabled == UNSET_VALUE
+        @enabled = false if @enabled.nil? || @enabled.empty? || @enabled == UNSET_VALUE
         @partition = true
         @location = UNSET_VALUE
         @mountname = UNSET_VALUE
