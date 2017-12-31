@@ -37,7 +37,7 @@ module VagrantPlugins
         @manage = true
         @format = true
         @use_lvm = true
-        @enabled = false if @enabled.nil? || @enabled.empty? || @enabled == UNSET_VALUE
+        @enabled = UNSET_VALUE
         @partition = true
         @location = UNSET_VALUE
         @mountname = UNSET_VALUE
@@ -66,12 +66,14 @@ module VagrantPlugins
         @diskdevice = "" if @diskdevice == UNSET_VALUE
         @filesystem = "" if @filesystem == UNSET_VALUE
         @volgroupname = "" if @volgroupname == UNSET_VALUE
-		@drive_letter = 0 if @drive_letter == UNSET_VALUE
+        @drive_letter = 0 if @drive_letter == UNSET_VALUE
         @part_type_code = "8e" if @part_type_code == UNSET_VALUE
       end
 
       def validate(machine)
         errors = _detected_errors
+
+        @enabled = false if @enabled == UNSET_VALUE
 
         errors << validate_bool('persistent_storage.create', @create)
         errors << validate_bool('persistent_storage.mount', @mount)
@@ -162,7 +164,6 @@ module VagrantPlugins
           nil
         end
       end
-
     end
   end
 end
