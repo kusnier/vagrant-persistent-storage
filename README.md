@@ -13,7 +13,7 @@ Requires Virtualbox 5
 After installing you can set the location and size of the persistent storage.
 
 The following options will create a persistent storage with 5000 MB, named mysql,
-mounted on /var/lib/mysql, in a volume group called 'vagrant'
+mounted on /var/lib/mysql, in a volume group called 'myvolgroup'
 ```ruby
 config.persistent_storage.enabled = true
 config.persistent_storage.location = "~/development/sourcehdd.vdi"
@@ -25,7 +25,7 @@ config.persistent_storage.volgroupname = 'myvolgroup'
 ```
 
 With `config.persistent_storage.mountoptions` you can change the mount options (default: defaults).  
-A example which sets `prjquota` option with xfs.
+An example which sets `prjquota` option with xfs.
 ```ruby
 config.persistent_storage.mountname    = 'xfs'
 config.persistent_storage.filesystem   = 'xfs'
