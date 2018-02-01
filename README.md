@@ -45,7 +45,7 @@ config.persistent_storage.partition = false
 
 Every `vagrant up` will attach this file as hard disk to the guest machine.
 A `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
-A `vagrant destroy` generally destroys all attached drives. See [VBoxMange unregistervm --delete option][vboxmanage_delete].
+A `vagrant destroy` generally destroys all attached drives. See [VBoxManage unregistervm --delete option][vboxmanage_delete].
 
 The disk is initialized and added to it's own volume group as specfied in the config; 
 this defaults to 'vagrant'. An ext4 filesystem is created and the disk mounted appropriately,
@@ -64,7 +64,7 @@ Options that are irrelevent to Windows are ignored, such as `mountname`, `filesy
 
 ## How Is The Storage Created?
 
-Based on the configuration provided, during a `vagrant up` a bash script is generated and uploaded to `/tmp/disk_operations_#{mnt_name}.sh` (Linux) or `disk_operations_#{mnt_name}.ps1` (Windows).  If the box has not been previously provisioned the script is executed on a `vagrant up`.  To force the scrip to be executed again you can run `vagrant provision` or if you have halted the box, `vagrant up --provision`.
+Based on the configuration provided, during a `vagrant up` a bash script is generated and uploaded to `/tmp/disk_operations_#{mnt_name}.sh` (Linux) or `disk_operations_#{mnt_name}.ps1` (Windows).  If the box has not been previously provisioned the script is executed on a `vagrant up`.  To force the script to be executed again you can run `vagrant provision` or if you have halted the box, `vagrant up --provision`.
 
 The outcome of the script being run is placed in the home drive of the vagrant user in a file called `disk_operation_log.txt`.
 
@@ -76,7 +76,7 @@ config.persistent_storage.part_type_code = '82'
 
 ## Troubleshooting
 
-If your box are not using LVM you must set `config.persistent_storage.use_lvm = false`.
+If your box is not using LVM you must set `config.persistent_storage.use_lvm = false`.
 
 ## Supported Providers
 
