@@ -94,6 +94,7 @@ echo "vg activation returned:  $?" >> disk_operation_log.txt
 MNT_NAME=#{mnt_name}
 [[ `blkid -t LABEL=${MNT_NAME:0:16} | grep #{fs_type}` ]] || mkfs.#{fs_type} -L #{mnt_name} #{device}
 echo "#{fs_type} creation return:  $?" >> disk_operation_log.txt
+<% end %>
 <% if mount == true %>
 # Create mountpoint #{mnt_point}
 [ -d #{mnt_point} ] || mkdir -p #{mnt_point}
@@ -103,7 +104,6 @@ echo "fstab update returned:  $?" >> disk_operation_log.txt
 # Finally, mount the partition
 [[ `mount | grep #{mnt_point}` ]] || mount #{mnt_point}
 echo "#{mnt_point} mounting returned:  $?" >> disk_operation_log.txt
-<% end %>
 <% end %>
 exit $?
         EOF
