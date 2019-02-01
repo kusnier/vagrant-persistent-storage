@@ -5,6 +5,7 @@ module VagrantPlugins
     class Config < Vagrant.plugin('2', :config)
 
       attr_accessor :size
+      attr_accessor :variant
       attr_accessor :create
       attr_accessor :mount
       attr_accessor :manage
@@ -32,6 +33,7 @@ module VagrantPlugins
 
       def initialize
         @size = UNSET_VALUE
+        @variant = UNSET_VALUE
         @create = true
         @mount = true
         @manage = true
@@ -52,6 +54,7 @@ module VagrantPlugins
 
       def finalize!
         @size = 0 if @size == UNSET_VALUE
+        @variant = "Standard" if @variant == UNSET_VALUE
         @create = true if @create == UNSET_VALUE
         @mount = true if @mount == UNSET_VALUE
         @manage = true if @manage == UNSET_VALUE
@@ -132,6 +135,12 @@ module VagrantPlugins
             :is_class   => volgroupname.class.to_s,
           })
         end
+        if !machine.config.persistent_storage.variant.kind_of?(String)
+          errors << I18n.t('vagrant_persistent_storage.config.not_a_string', {
+            :config_key => 'persistent_storage.variant',
+            :is_class   => variant.class.to_s,
+          })
+       end
 
         mount_point_path = Pathname.new("#{machine.config.persistent_storage.location}")
         if ! (mount_point_path.absolute? || mount_point_path.relative?)

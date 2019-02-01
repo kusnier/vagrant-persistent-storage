@@ -43,6 +43,11 @@ If you are using LVM and you would prefer to use the disk rather than a partitio
 config.persistent_storage.partition = false
 ```
 
+When you expect a lot of writes in the disk (the case for `/home` mountpoints) it is recommended to change the disk variant to `Fixed` (fixed allocation) instead of the default `Standard` (dyanamic allocation). The tested types are `Standard` (default) and `Fixed`.
+```ruby
+config.persistent_storage.variant    = 'Fixed'
+```
+
 Every `vagrant up` will attach this file as hard disk to the guest machine.
 A `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
 A `vagrant destroy` generally destroys all attached drives. See [VBoxManage unregistervm --delete option][vboxmanage_delete].
@@ -106,6 +111,7 @@ If your box is not using LVM you must set `config.persistent_storage.use_lvm = f
 * [Alex Tomkins](https://github.com/tomkins)
 * [Marcin Wolny](https://github.com/mwolny)
 * [Adam Huffman](https://github.com/verdurin)
+* [caio2k](https://github.com/caio2k)
 
 ## TODO
 
