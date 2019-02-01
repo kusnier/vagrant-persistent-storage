@@ -38,7 +38,8 @@ module VagrantPlugins
             env[:ui].info I18n.t("vagrant_persistent_storage.action.create_storage")
             location = env[:machine].config.persistent_storage.location
             size = env[:machine].config.persistent_storage.size
-            env[:machine].provider.driver.create_storage(location, size)
+            variant = env[:machine].config.persistent_storage.variant
+            env[:machine].provider.driver.create_storage(location, size, variant)
             @app.call(env)
           end
 
