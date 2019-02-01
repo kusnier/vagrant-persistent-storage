@@ -17,11 +17,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.persistent_storage.enabled = true
   config.persistent_storage.location = "virtualdrive.vdi"
   config.persistent_storage.size = 5000
+  config.persistent_storage.variant = 'Standard'
   config.persistent_storage.mountname = 'mysql'
   config.persistent_storage.filesystem = 'ext4'
   config.persistent_storage.mountpoint = '/var/lib/mysql'
   config.persistent_storage.volgroupname = 'myvolgroup'
-  config.persistent_storage.partition = false
 
   config.vm.provision "fix-no-tty", type: "shell" do |s|
       s.privileged = false
