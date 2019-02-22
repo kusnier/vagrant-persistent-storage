@@ -112,6 +112,7 @@ If your box is not using LVM you must set `config.persistent_storage.use_lvm = f
 * [Marcin Wolny](https://github.com/mwolny)
 * [Adam Huffman](https://github.com/verdurin)
 * [caio2k](https://github.com/caio2k)
+* [Francesco](https://github.com/cisco87)
 
 ## TODO
 
