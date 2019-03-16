@@ -5,6 +5,12 @@ require 'erb'
 module VagrantPlugins
   module PersistentStorage
     module ManageStorage
+      def get_tmp_dir(m)
+        m.communicate.sudo('dirname $(mktemp -u)', :error_check => false) do |type, data|
+          tmpdir = data.to_s.strip
+		  return tmpdir
+        end
+      end
       def populate_template(m)
         mnt_name = m.config.persistent_storage.mountname
         mnt_point = m.config.persistent_storage.mountpoint
@@ -115,7 +121,8 @@ exit $?
 		if os == 'windows'
 			target_script = "disk_operations_#{mnt_name}.ps1"
 		else
-			target_script = "/tmp/disk_operations_#{mnt_name}.sh"
+			tmpdir = get_tmp_dir(m)
+			target_script = tmpdir + "/disk_operations_#{mnt_name}.sh"
 		end
 
         File.open("#{tmp_script.path}", 'wb') do |f|
@@ -135,7 +142,8 @@ exit $?
 			target_script = "disk_operations_#{mnt_name}.ps1"
 			m.communicate.sudo("powershell -executionpolicy bypass -file #{target_script}")
 		else
-			target_script = "/tmp/disk_operations_#{mnt_name}.sh"
+			tmpdir = get_tmp_dir(m)
+			target_script = tmpdir + "/disk_operations_#{mnt_name}.sh"
 			m.communicate.sudo("#{target_script}")
 		end
 
@@ -147,7 +155,6 @@ exit $?
           run_disk_operations(m)
         end
       end
-
     end
   end
 end
