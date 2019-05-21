@@ -1,3 +1,4 @@
+require 'log4r'
 require 'pathname'
 
 module VagrantPlugins
@@ -50,6 +51,7 @@ module VagrantPlugins
         @volgroupname = UNSET_VALUE
         @drive_letter = UNSET_VALUE
         @part_type_code = UNSET_VALUE
+        @logger = Log4r::Logger.new('vagrant::persistent_storage::config')
       end
 
       def finalize!
@@ -149,6 +151,17 @@ module VagrantPlugins
             :is_path   => location.class.to_s,
           })
         end
+
+        if ! Pathname.new(machine.config.persistent_storage.location).absolute?
+          # Non-absolute paths are relative to machine's root directory (where
+          # Vagrantfile is placed). Paths under HOME, e.g., ~/disk.vdi), are
+          # expanded as expected.
+          new_location = File.expand_path(machine.config.persistent_storage.location, machine.env.root_path)
+          @logger.info "Found non-absolute location #{machine.config.persistent_storage.location}. Using location #{new_location} instead."
+          machine.config.persistent_storage.location = new_location
+        end
+
+        machine.ui.info "Using #{machine.config.persistent_storage.location} for persistent storage."
 
         if ! File.exists?@location.to_s and ! @create == "true"
           errors << I18n.t('vagrant_persistent_storage.config.no_create_and_missing', {
