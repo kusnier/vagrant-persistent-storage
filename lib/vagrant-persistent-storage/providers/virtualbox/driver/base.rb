@@ -48,6 +48,7 @@ module VagrantPlugins
           persistent_storage_data = read_persistent_storage(location_realpath)
           if location and persistent_storage_data and identical_files(persistent_storage_data.location, location_realpath)
               execute("storageattach", @uuid, "--storagectl", persistent_storage_data.controller, "--port", persistent_storage_data.port, "--device", "0", "--type", "hdd", "--medium", "none")
+              execute("closemedium", "disk", persistent_storage_data.image)
           end
         end
 
@@ -57,12 +58,26 @@ module VagrantPlugins
           storage_data = nil
           controller_name = get_controller_name
           info = execute("showvminfo", @uuid, "--machinereadable", :retryable => true)
+          # Parse the following two lines matching the controller name:
+          # "SATA Controller-4-0"="/data/my-persistent-disk.vdi"
+          # "SATA Controller-ImageUUID-4-0"="1b5c4a17-3f84-49ba-b394-bfc609f30283"
+          # The first reports the underlying file, while the second reports the
+          # UUID of the VirtualBox medium.
           info.split("\n").each do |line|
               tmp_storage_data = nil
-              tmp_storage_data = PersistentStorageData.new(controller_name, $1, $3) if line =~ /^"#{controller_name}-(\d+)-(\d+)"="(.*)"/
+              tmp_storage_data = PersistentStorageData.new(controller_name, $1, $3, nil) if line =~ /^"#{controller_name}-(\d+)-(\d+)"="(.*)"/
+
+              tmp_storage_data_image = nil
+              tmp_storage_data_image = $3 if line =~ /^"#{controller_name}-ImageUUID-(\d+)-(\d+)"="(.*)"/
 
               if !tmp_storage_data.nil? and tmp_storage_data.location != 'none' and identical_files(File.expand_path(location), tmp_storage_data.location)
                   storage_data = tmp_storage_data
+              end
+
+              # XXX: The ImageUUID line comes second and thus we have already
+              # storage_data initialized.
+              if !storage_data.nil? and !tmp_storage_data_image.nil?
+                  storage_data.image = tmp_storage_data_image
               end
           end
           return storage_data
@@ -93,11 +108,13 @@ module VagrantPlugins
           attr_accessor :controller
           attr_accessor :port
           attr_accessor :location
+          attr_accessor :image
 
-          def initialize(controller,port,location)
+          def initialize(controller,port,location,image)
             @controller = controller
             @port = port
             @location = location
+            @image = image
           end
         end
 
