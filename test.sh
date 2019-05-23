@@ -31,7 +31,7 @@ do
 	else
 		echo ...[FAILED]
 	fi
-	VAGRANT_VAGRANTFILE="$f" vagrant destroy -f --no-color >> $f.log && "$VBOXMANAGE" closemedium disk virtualdrive.vdi --delete >> $f.log 2>&1 
+	VAGRANT_VAGRANTFILE="$f" vagrant destroy -f --no-color >> $f.log && rm -fv virtualdrive.vdi >> $f.log 2>&1 
 done
 
 
