@@ -66,7 +66,7 @@ module VagrantPlugins
 		else
 		## shell script to format disk, create/manage LVM, mount disk
         disk_operations_template = ERB.new <<-EOF
-#!/bin/bash
+#!/usr/bin/env bash
 DISK_DEV=#{disk_dev}
 <% if partition == true %>
 # fdisk the disk if it's not a block device already:
