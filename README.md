@@ -2,7 +2,7 @@
 
 A Vagrant plugin that creates a persistent storage and attaches it to guest machine.
 
-Requires Virtualbox 5
+Requires Virtualbox 5/6
 
 ## Installation
 
