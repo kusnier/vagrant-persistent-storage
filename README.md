@@ -48,6 +48,15 @@ When you expect a lot of writes in the disk (the case for `/home` mountpoints) i
 config.persistent_storage.variant    = 'Fixed'
 ```
 
+If you want to pass a list of options to the underlying `VboxManage
+storageattach` call, you can use the `config.persistent_storage.attachoptions`
+option. For instance, if you want to enable TRIM support:
+
+```ruby
+config.persistent_storage.mountoptions = ['defaults', 'discard']
+config.persistent_storage.attachoptions = ['--discard', 'on']
+```
+
 Every `vagrant up` will attach this file as hard disk to the guest machine.
 A `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
 A `vagrant destroy` generally destroys all attached drives. See [VBoxManage unregistervm --delete option][vboxmanage_delete].

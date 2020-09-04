@@ -24,7 +24,8 @@ module VagrantPlugins
 
           env[:ui].info I18n.t("vagrant_persistent_storage.action.attach_storage")
           location = env[:machine].config.persistent_storage.location
-          env[:machine].provider.driver.attach_storage(location)
+          attachoptions = env[:machine].config.persistent_storage.attachoptions
+          env[:machine].provider.driver.attach_storage(location, attachoptions)
 
           @app.call(env)
 
