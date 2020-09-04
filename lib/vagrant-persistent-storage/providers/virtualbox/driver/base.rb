@@ -15,7 +15,7 @@ module VagrantPlugins
             execute("storagectl", @uuid, "--name", controller_name, "--" + (self.remove_prefix(@version) ? "" : "sata") + "portcount", "2")
           end
         end
-        
+
         def remove_prefix(vbox_version)
            return vbox_version.start_with?("4.3") || vbox_version.start_with?("5.") || vbox_version.start_with?("6.")
         end
@@ -122,4 +122,3 @@ module VagrantPlugins
     end
   end
 end
-
