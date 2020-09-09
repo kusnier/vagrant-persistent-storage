@@ -15,7 +15,7 @@ module VagrantPlugins
             execute("storagectl", @uuid, "--name", controller_name, "--" + (self.remove_prefix(@version) ? "" : "sata") + "portcount", "2")
           end
         end
-        
+
         def remove_prefix(vbox_version)
            return vbox_version.start_with?("4.3") || vbox_version.start_with?("5.") || vbox_version.start_with?("6.")
         end
@@ -24,7 +24,7 @@ module VagrantPlugins
           execute("createhd", "--filename", File.expand_path(location), "--size", "#{size}", "--variant", "#{variant}")
         end
 
-        def attach_storage(location)
+        def attach_storage(location, attachoptions)
           controller_name = get_controller_name
           if controller_name.nil?
             controller_name = "SATA Controller"
@@ -32,15 +32,15 @@ module VagrantPlugins
 
           location_realpath = File.expand_path(location)
 
+          base_cmd = ["storageattach", @uuid, "--storagectl", get_controller_name, "--type", "hdd", "--medium", "#{location_realpath}"]
           if controller_name.start_with?("IDE")
-              execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "1", "--device", "0", "--type", "hdd", "--medium", "#{location_realpath}")
+              ctrl_args = ["--port", "1", "--device", "0"]
           elsif controller_name.start_with?("SCSI")
-              execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "15", "--device", "0", "--type", "hdd", "--medium", "#{location_realpath}")
+              ctrl_args = ["--port", "15", "--device", "0"]
           else
-              execute("storageattach", @uuid, "--storagectl", get_controller_name, "--port", "4", "--device", "0", "--type", "hdd", "--medium", "#{location_realpath}", "--hotpluggable", "on")
+              ctrl_args = ["--port", "4", "--device", "0", "--hotpluggable", "on"]
           end
-
-
+          execute(*(base_cmd + ctrl_args + attachoptions))
         end
 
         def detach_storage(location)
@@ -122,4 +122,3 @@ module VagrantPlugins
     end
   end
 end
-

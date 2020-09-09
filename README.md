@@ -24,7 +24,7 @@ config.persistent_storage.mountpoint = '/var/lib/mysql'
 config.persistent_storage.volgroupname = 'myvolgroup'
 ```
 
-With `config.persistent_storage.mountoptions` you can change the mount options (default: defaults).  
+With `config.persistent_storage.mountoptions` you can change the mount options (default: defaults).
 An example which sets `prjquota` option with xfs.
 ```ruby
 config.persistent_storage.mountname    = 'xfs'
@@ -48,17 +48,26 @@ When you expect a lot of writes in the disk (the case for `/home` mountpoints) i
 config.persistent_storage.variant    = 'Fixed'
 ```
 
+If you want to pass a list of options to the underlying `VboxManage
+storageattach` call, you can use the `config.persistent_storage.attachoptions`
+option. For instance, if you want to enable TRIM support:
+
+```ruby
+config.persistent_storage.mountoptions = ['defaults', 'discard']
+config.persistent_storage.attachoptions = ['--discard', 'on']
+```
+
 Every `vagrant up` will attach this file as hard disk to the guest machine.
 A `vagrant destroy` will detach the storage to avoid deletion of the storage by vagrant.
 A `vagrant destroy` generally destroys all attached drives. See [VBoxManage unregistervm --delete option][vboxmanage_delete].
 
-The disk is initialized and added to it's own volume group as specfied in the config; 
+The disk is initialized and added to it's own volume group as specfied in the config;
 this defaults to 'vagrant'. An ext4 filesystem is created and the disk mounted appropriately,
 with entries added to fstab ... subsequent runs will mount this disk with the options specified.
 
 ## Windows Guests
 
-Windows Guests must use the WinRM communicator by setting `vm.communicator = 'winrm'`.  An additional option is provided to 
+Windows Guests must use the WinRM communicator by setting `vm.communicator = 'winrm'`.  An additional option is provided to
 allow you to set the drive letter using:
 
 ```ruby
