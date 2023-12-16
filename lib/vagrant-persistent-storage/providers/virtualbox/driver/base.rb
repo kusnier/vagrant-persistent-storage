@@ -17,7 +17,7 @@ module VagrantPlugins
         end
 
         def remove_prefix(vbox_version)
-           return vbox_version.start_with?("4.3") || vbox_version.start_with?("5.") || vbox_version.start_with?("6.")
+           return vbox_version.start_with?("4.3") || vbox_version.start_with?("5.") || vbox_version.start_with?("6.")|| vbox_version.start_with?("7.")
         end
 
         def create_storage(location, size, variant)
