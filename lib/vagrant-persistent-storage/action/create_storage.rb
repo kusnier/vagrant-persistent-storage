@@ -28,7 +28,7 @@ module VagrantPlugins
           # check config to see if the disk should be created
           return @app.call(env) unless env[:machine].config.persistent_storage.create?
 
-          if File.exists?(File.expand_path(env[:machine].config.persistent_storage.location))
+          if File.exist?(File.expand_path(env[:machine].config.persistent_storage.location))
             @logger.info '** Persistent Storage Volume exists, not creating **'
             env[:ui].info I18n.t("vagrant_persistent_storage.action.not_creating")
             @app.call(env)
