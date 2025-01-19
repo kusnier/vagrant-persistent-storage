@@ -126,6 +126,8 @@ If your box is not using LVM you must set `config.persistent_storage.use_lvm = f
 * [Symaxion](https://github.com/Symaxion)
 * [Alex Pyrgiotis](https://github.com/apyrgio)
 * [qdetweiler](https://github.com/qdetweiler)
+* [Jacob Christensen](https://github.com/jakex10sen)
+* [roccotigger](https://github.com/roccotigger)
 
 ## TODO
 
