@@ -166,7 +166,7 @@ module VagrantPlugins
 
         machine.ui.info "Using #{machine.config.persistent_storage.location} for persistent storage."
 
-        if ! File.exists?@location.to_s and ! @create == "true"
+        if ! File.exist?@location.to_s and ! @create == "true"
           errors << I18n.t('vagrant_persistent_storage.config.no_create_and_missing', {
             :config_key => 'persistent_storage.create',
             :is_path   => location.class.to_s,
